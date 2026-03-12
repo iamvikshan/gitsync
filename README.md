@@ -64,7 +64,7 @@ jobs:
         uses: actions/checkout@v6.0.2
 
       - name: Sync with GitLab
-        uses: iamvikshan/advanced-git-sync@v1.5.5
+        uses: iamvikshan/advanced-git-sync@v1.0.0
         with:
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
