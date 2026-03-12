@@ -91,6 +91,6 @@ docs/
 
 - **Issues**: Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md) first
 - **Questions**: Open a
-  [GitHub Discussion](https://github.com/OpenSaucedHub/advanced-git-sync/discussions)
-- **Bugs**: Report on [GitHub Issues](https://github.com/OpenSaucedHub/advanced-git-sync/issues)
+  [GitHub Discussion](https://github.com/iamvikshan/advanced-git-sync/discussions)
+- **Bugs**: Report on [GitHub Issues](https://github.com/iamvikshan/advanced-git-sync/issues)
 - **Contributing**: See [contributing.md](contributing.md)

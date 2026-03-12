@@ -38,13 +38,13 @@ advanced-git-sync (Core)
 │       └── registry.ts           # Plugin registry and validation
 └── package.json
 
-@opensaucedhub/git-sync-plugin-codeberg (Plugin)
+@iamvikshan/git-sync-plugin-codeberg (Plugin)
 ├── src/
 │   └── CodebergClient.ts         # Implements IClient interface
 ├── package.json
 └── README.md
 
-@opensaucedhub/git-sync-plugin-gitea (Plugin)
+@iamvikshan/git-sync-plugin-gitea (Plugin)
 ├── src/
 │   └── GiteaClient.ts            # Implements IClient interface
 ├── package.json
@@ -61,7 +61,7 @@ The plugin system will support two loading strategies:
 providers:
   codeberg:
     enabled: true
-    plugin: '@opensaucedhub/git-sync-plugin-codeberg'
+    plugin: '@iamvikshan/git-sync-plugin-codeberg'
     version: '^1.0.0' # Optional, uses latest if not specified
     token: ${{ secrets.CODEBERG_TOKEN }}
     owner: 'my-org'
@@ -138,7 +138,7 @@ export interface PluginHelpers {
 mkdir git-sync-plugin-codeberg
 cd git-sync-plugin-codeberg
 npm init -y
-npm install --save-peer @opensaucedhub/git-sync
+npm install --save-peer @iamvikshan/git-sync
 npm install --save-dev typescript @types/node
 ```
 
@@ -146,12 +146,12 @@ npm install --save-dev typescript @types/node
 
 ```json
 {
-  "name": "@opensaucedhub/git-sync-plugin-codeberg",
+  "name": "@iamvikshan/git-sync-plugin-codeberg",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "peerDependencies": {
-    "@opensaucedhub/git-sync": "^1.4.0"
+    "@iamvikshan/git-sync": "^1.4.0"
   },
   "dependencies": {
     "axios": "^1.6.0"
@@ -171,7 +171,7 @@ npm install --save-dev typescript @types/node
 
 ```typescript
 // src/CodebergClient.ts
-import { IClient, Config, Repository, Branch, BranchFilterOptions } from '@opensaucedhub/git-sync'
+import { IClient, Config, Repository, Branch, BranchFilterOptions } from '@iamvikshan/git-sync'
 import axios, { AxiosInstance } from 'axios'
 
 export class CodebergClient implements IClient {
@@ -258,7 +258,7 @@ export const pluginMetadata = {
   name: 'codeberg',
   version: '1.0.0',
   description: 'Codeberg provider plugin for Advanced Git Sync',
-  author: 'OpenSaucedHub',
+  author: 'iamvikshan',
   clientClass: CodebergClient
 }
 
@@ -538,7 +538,7 @@ github:
 
 codeberg:
   enabled: true
-  plugin: '@opensaucedhub/git-sync-plugin-codeberg'
+  plugin: '@iamvikshan/git-sync-plugin-codeberg'
   token: ${{ secrets.CODEBERG_TOKEN }}
   host: 'https://codeberg.org'
   owner: 'myusername'
@@ -564,13 +564,13 @@ gitlab:
 
 codeberg:
   enabled: true
-  plugin: '@opensaucedhub/git-sync-plugin-codeberg'
+  plugin: '@iamvikshan/git-sync-plugin-codeberg'
   owner: 'my-org'
   repo: 'project-a'
 
 gitea:
   enabled: true
-  plugin: '@opensaucedhub/git-sync-plugin-gitea'
+  plugin: '@iamvikshan/git-sync-plugin-gitea'
   host: 'https://gitea.example.com'
   owner: 'my-org'
   repo: 'project-a'
@@ -602,7 +602,7 @@ custom-provider:
 ```typescript
 // test/CodebergClient.test.ts
 import { CodebergClient } from '../src/CodebergClient'
-import { Config, Repository } from '@opensaucedhub/git-sync'
+import { Config, Repository } from '@iamvikshan/git-sync'
 
 describe('CodebergClient', () => {
   let client: CodebergClient
@@ -645,7 +645,7 @@ describe('CodebergClient', () => {
 
 Follow this naming pattern for consistency:
 
-- **NPM Package**: `@opensaucedhub/git-sync-plugin-<provider>`
+- **NPM Package**: `@iamvikshan/git-sync-plugin-<provider>`
 - **GitHub Repo**: `git-sync-plugin-<provider>`
 
 ### Plugin Registry (Future Enhancement)
@@ -657,18 +657,18 @@ Create a central registry for approved plugins:
   "plugins": [
     {
       "name": "codeberg",
-      "package": "@opensaucedhub/git-sync-plugin-codeberg",
+      "package": "@iamvikshan/git-sync-plugin-codeberg",
       "version": "1.0.0",
       "description": "Codeberg provider support",
-      "repository": "https://github.com/OpenSaucedHub/git-sync-plugin-codeberg",
+      "repository": "https://github.com/iamvikshan/git-sync-plugin-codeberg",
       "verified": true
     },
     {
       "name": "gitea",
-      "package": "@opensaucedhub/git-sync-plugin-gitea",
+      "package": "@iamvikshan/git-sync-plugin-gitea",
       "version": "1.0.0",
       "description": "Gitea provider support",
-      "repository": "https://github.com/OpenSaucedHub/git-sync-plugin-gitea",
+      "repository": "https://github.com/iamvikshan/git-sync-plugin-gitea",
       "verified": true
     }
   ]
@@ -726,9 +726,9 @@ Core package: ~8MB (-47% reduction)
 └── GitHub deps: ~3MB (most common use case)
 
 Optional plugins:
-├── @opensaucedhub/git-sync-plugin-gitlab: ~7MB
-├── @opensaucedhub/git-sync-plugin-codeberg: ~1MB
-└── @opensaucedhub/git-sync-plugin-gitea: ~1MB
+├── @iamvikshan/git-sync-plugin-gitlab: ~7MB
+├── @iamvikshan/git-sync-plugin-codeberg: ~1MB
+└── @iamvikshan/git-sync-plugin-gitea: ~1MB
 ```
 
 ### Performance Impact
@@ -750,12 +750,12 @@ To contribute a new provider plugin:
 ## 📚 Resources
 
 - **Plugin Template**:
-  [git-sync-plugin-template](https://github.com/OpenSaucedHub/git-sync-plugin-template)
+  [git-sync-plugin-template](https://github.com/iamvikshan/git-sync-plugin-template)
 - **Example Plugin**:
-  [git-sync-plugin-codeberg](https://github.com/OpenSaucedHub/git-sync-plugin-codeberg)
-- **Type Definitions**: Available in `@opensaucedhub/git-sync` package
+  [git-sync-plugin-codeberg](https://github.com/iamvikshan/git-sync-plugin-codeberg)
+- **Type Definitions**: Available in `@iamvikshan/git-sync` package
 - **Community Plugins**:
-  [Plugin Registry](https://github.com/OpenSaucedHub/advanced-git-sync/wiki/Plugins)
+  [Plugin Registry](https://github.com/iamvikshan/advanced-git-sync/wiki/Plugins)
 
 ## 🔮 Future Enhancements
 
@@ -769,4 +769,4 @@ To contribute a new provider plugin:
 ---
 
 **Questions?** Open an issue or start a discussion in the
-[Advanced Git Sync repository](https://github.com/OpenSaucedHub/advanced-git-sync).
+[Advanced Git Sync repository](https://github.com/iamvikshan/advanced-git-sync).

@@ -67,13 +67,13 @@ module.exports = {
       {
         prepareCmd: [
           // Update README.md version references
-          "sed -i 's|OpenSaucedHub/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|OpenSaucedHub/advanced-git-sync@v${nextRelease.version}|g' README.md",
+          "sed -i 's|iamvikshan/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|iamvikshan/advanced-git-sync@v${nextRelease.version}|g' README.md",
           // Update documentation version references
-          "sed -i 's|OpenSaucedHub/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|OpenSaucedHub/advanced-git-sync@v${nextRelease.version}|g' docs/TROUBLESHOOTING.md",
-          "sed -i 's|OpenSaucedHub/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|OpenSaucedHub/advanced-git-sync@v${nextRelease.version}|g' docs/EXAMPLES.md",
-          "sed -i 's|OpenSaucedHub/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|OpenSaucedHub/advanced-git-sync@v${nextRelease.version}|g' docs/CONFIGURATION.md",
-          "sed -i 's|OpenSaucedHub/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|OpenSaucedHub/advanced-git-sync@v${nextRelease.version}|g' docs/README.md",
-          "sed -i 's|OpenSaucedHub/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|OpenSaucedHub/advanced-git-sync@v${nextRelease.version}|g' docs/SDK.md",
+          "sed -i 's|iamvikshan/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|iamvikshan/advanced-git-sync@v${nextRelease.version}|g' docs/TROUBLESHOOTING.md",
+          "sed -i 's|iamvikshan/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|iamvikshan/advanced-git-sync@v${nextRelease.version}|g' docs/EXAMPLES.md",
+          "sed -i 's|iamvikshan/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|iamvikshan/advanced-git-sync@v${nextRelease.version}|g' docs/CONFIGURATION.md",
+          "sed -i 's|iamvikshan/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|iamvikshan/advanced-git-sync@v${nextRelease.version}|g' docs/README.md",
+          "sed -i 's|iamvikshan/advanced-git-sync@v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|iamvikshan/advanced-git-sync@v${nextRelease.version}|g' docs/SDK.md",
           // Update action version references in documentation
           "sed -i 's|\\*\\*Action Version:\\*\\* v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|**Action Version:** v${nextRelease.version}|g' docs/TROUBLESHOOTING.md",
           // Update package.json version

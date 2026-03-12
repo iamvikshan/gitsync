@@ -1,8 +1,8 @@
 <div align="center">
 
 [![wakatime](https://wakatime.com/badge/user/8535571c-1079-48d4-ac47-11a817f61249/project/c57869a3-8a13-4cc7-b4f3-8fab999f5595.svg)](https://wakatime.com/badge/user/8535571c-1079-48d4-ac47-11a817f61249/project/c57869a3-8a13-4cc7-b4f3-8fab999f5595)
-[![Releases](https://github.com/OpenSaucedHub/advanced-git-sync/actions/workflows/release.yml/badge.svg)](https://github.com/OpenSaucedHub/advanced-git-sync/actions/workflows/release.yml)
-[![CLA Assistant](https://github.com/OpenSaucedHub/advanced-git-sync/actions/workflows/cla.yml/badge.svg)](https://github.com/OpenSaucedHub/advanced-git-sync/actions/workflows/cla.yml)
+[![Releases](https://github.com/iamvikshan/advanced-git-sync/actions/workflows/release.yml/badge.svg)](https://github.com/iamvikshan/advanced-git-sync/actions/workflows/release.yml)
+[![CLA Assistant](https://github.com/iamvikshan/advanced-git-sync/actions/workflows/cla.yml/badge.svg)](https://github.com/iamvikshan/advanced-git-sync/actions/workflows/cla.yml)
 
 </div>
 
@@ -64,7 +64,7 @@ jobs:
         uses: actions/checkout@v6.0.2
 
       - name: Sync with GitLab
-        uses: OpenSaucedHub/advanced-git-sync@v1.5.5
+        uses: iamvikshan/advanced-git-sync@v1.5.5
         with:
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -118,21 +118,21 @@ For detailed configuration and advanced usage:
 ## 🤝 Need Help?
 
 - 📋 [Configuration Examples](docs/sync-config-example.yml) - Ready-to-use configuration templates
-- 🐛 [Report Issues](https://github.com/OpenSaucedHub/advanced-git-sync/issues) - Found a bug or
+- 🐛 [Report Issues](https://github.com/iamvikshan/advanced-git-sync/issues) - Found a bug or
   have a feature request?
-- 💬 [Discussions](https://github.com/OpenSaucedHub/advanced-git-sync/discussions) - Ask questions
+- 💬 [Discussions](https://github.com/iamvikshan/advanced-git-sync/discussions) - Ask questions
   and share ideas
 
 ## 🤝 Contributing
 
 We welcome contributions! Please see our
-[Contributing Guide](https://github.com/OpenSaucedHub/.github/blob/main/.github/CONTRIBUTING.md) for
+[Contributing Guide](https://github.com/iamvikshan/.github/blob/main/.github/CONTRIBUTING.md) for
 details.
 
 ## 📄 License
 
 MIT License - see the
-[LICENSE](https://github.com/OpenSaucedHub/.github/blob/main/.github/LICENSE.md) file for details.
+[LICENSE](https://github.com/iamvikshan/.github/blob/main/.github/LICENSE.md) file for details.
 
 ---
 
