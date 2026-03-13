@@ -22,23 +22,23 @@ if [ "$CURRENT_USER" != "$GIT_USER" ] || [ "$CURRENT_EMAIL" != "$GIT_EMAIL" ]; t
   echo "   Expected: $GIT_USER <$GIT_EMAIL>"
   echo "   Current:  $CURRENT_USER <$CURRENT_EMAIL>"
   echo ""
-  echo "🔧 Running iamvikshan.sh to fix attribution..."
+  echo "🔧 Running git.sh to fix attribution..."
 
-  if [ ! -x "./scripts/iamvikshan.sh" ]; then
+  if [ ! -x "./scripts/git.sh" ]; then
     echo ""
-    echo "❌ Error: ./scripts/iamvikshan.sh is not executable or does not exist."
-    echo "   Run: chmod +x scripts/iamvikshan.sh"
+    echo "❌ Error: ./scripts/git.sh is not executable or does not exist."
+    echo "   Run: chmod +x scripts/git.sh"
     exit 1
   fi
 
-  if ./scripts/iamvikshan.sh; then
+  if ./scripts/git.sh; then
     echo ""
     echo "✅ Git config updated. Please run 'git commit' again."
     exit 1
   else
     echo ""
-    echo "❌ Error: iamvikshan.sh failed to update git config."
-    echo "   Please run './scripts/iamvikshan.sh' manually to debug."
+    echo "❌ Error: git.sh failed to update git config."
+    echo "   Please run './scripts/git.sh' manually to debug."
     exit 1
   fi
 fi

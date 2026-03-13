@@ -14,7 +14,7 @@
     "start": "bun src/index.ts",
     "check": "tsc --noEmit",
     "build": "ncc build src/index.ts -o dist",
-    "prepare": "husky"
+    "prepare": "test -d .git && husky || true"
   },
   "keywords": [
     "github",
@@ -27,12 +27,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iamvikshan/advanced-git-sync.git"
+    "url": "git+https://github.com/iamvikshan/gitsync.git"
   },
   "bugs": {
-    "url": "https://github.com/iamvikshan/advanced-git-sync/issues"
+    "url": "https://github.com/iamvikshan/gitsync/issues"
   },
-  "homepage": "https://github.com/iamvikshan/advanced-git-sync#readme",
+  "homepage": "https://github.com/iamvikshan/gitsync#readme",
   "dependencies": {
     "@actions/core": "^3.0.0",
     "@actions/github": "^9.0.0",

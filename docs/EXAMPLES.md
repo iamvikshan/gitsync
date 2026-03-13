@@ -427,7 +427,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: iamvikshan/advanced-git-sync@v1
+      - uses: iamvikshan/gitsync@v1
         with:
           CONFIG_PATH: .github/sync-branches.yml
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
@@ -469,7 +469,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: iamvikshan/advanced-git-sync@v1
+      - uses: iamvikshan/gitsync@v1
         with:
           CONFIG_PATH: .github/sync-releases.yml
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}

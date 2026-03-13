@@ -11,6 +11,10 @@ inputs:
     description: "GitHub Personal Access Token with workflow scope (recommended)"
     required: false
 
+  GH_PAT:
+    description: "GitHub Personal Access Token (alias for GH_TOKEN)"
+    required: false
+
   GITLAB_TOKEN:
     description: "GitLab token for authentication"
     required: false
@@ -31,7 +35,7 @@ runs:
     - name: Run Advanced Git Sync
       shell: bash
       env:
-        INPUT_GITHUB_TOKEN: ${{ inputs.GH_TOKEN || inputs.GITHUB_TOKEN }}
+        INPUT_GITHUB_TOKEN: ${{ inputs.GH_PAT || inputs.GH_TOKEN || inputs.GITHUB_TOKEN }}
         INPUT_GITLAB_TOKEN: ${{ inputs.GITLAB_TOKEN }}
         INPUT_CONFIG_PATH: ${{ inputs.CONFIG_PATH }}
       run: bun run ${{ github.action_path }}/src/index.ts

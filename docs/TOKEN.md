@@ -159,7 +159,7 @@ If you're still having issues:
 
 1. Check the [Troubleshooting Guide](TROUBLESHOOTING.md)
 2. Review the action logs for specific error messages
-3. [Open an issue](https://github.com/iamvikshan/advanced-git-sync/issues) with:
+3. [Open an issue](https://github.com/iamvikshan/gitsync/issues) with:
    - Error message (with tokens redacted)
    - Your configuration (with sensitive data removed)
    - Steps to reproduce the issue

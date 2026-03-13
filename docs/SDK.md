@@ -24,7 +24,7 @@ extensibility.
 ### Core Components
 
 ```
-advanced-git-sync (Core)
+gitsync (Core)
 ├── src/
 │   ├── structures/
 │   │   ├── clientManager.ts      # Manages client instances and plugin loading
@@ -755,7 +755,7 @@ To contribute a new provider plugin:
   [git-sync-plugin-codeberg](https://github.com/iamvikshan/git-sync-plugin-codeberg)
 - **Type Definitions**: Available in `@iamvikshan/git-sync` package
 - **Community Plugins**:
-  [Plugin Registry](https://github.com/iamvikshan/advanced-git-sync/wiki/Plugins)
+  [Plugin Registry](https://github.com/iamvikshan/gitsync/wiki/Plugins)
 
 ## 🔮 Future Enhancements
 
@@ -769,4 +769,4 @@ To contribute a new provider plugin:
 ---
 
 **Questions?** Open an issue or start a discussion in the
-[Advanced Git Sync repository](https://github.com/iamvikshan/advanced-git-sync).
+[Advanced Git Sync repository](https://github.com/iamvikshan/gitsync).

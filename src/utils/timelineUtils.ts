@@ -734,12 +734,12 @@ export class TimelineManager {
     }
 
     await exec.exec('git', ['init'], { cwd: this.tmpDir })
-    await exec.exec('git', ['config', 'user.name', 'advanced-git-sync'], {
+    await exec.exec('git', ['config', 'user.name', 'gitsync'], {
       cwd: this.tmpDir
     })
     await exec.exec(
       'git',
-      ['config', 'user.email', 'advanced-git-sync@users.noreply.github.com'],
+      ['config', 'user.email', 'gitsync@users.noreply.github.com'],
       { cwd: this.tmpDir }
     )
   }

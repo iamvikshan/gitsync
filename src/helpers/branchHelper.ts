@@ -204,12 +204,12 @@ export class BranchHelper {
       await exec.exec('git', ['init', '--initial-branch=sync-main'], {
         cwd: tmpDir
       })
-      await exec.exec('git', ['config', 'user.name', 'advanced-git-sync'], {
+      await exec.exec('git', ['config', 'user.name', 'gitsync'], {
         cwd: tmpDir
       })
       await exec.exec(
         'git',
-        ['config', 'user.email', 'advanced-git-sync@users.noreply.github.com'],
+        ['config', 'user.email', 'gitsync@users.noreply.github.com'],
         { cwd: tmpDir }
       )
 
@@ -285,12 +285,12 @@ export class BranchHelper {
       await exec.exec('git', ['init', '--initial-branch=sync-main'], {
         cwd: tmpDir
       })
-      await exec.exec('git', ['config', 'user.name', 'advanced-git-sync'], {
+      await exec.exec('git', ['config', 'user.name', 'gitsync'], {
         cwd: tmpDir
       })
       await exec.exec(
         'git',
-        ['config', 'user.email', 'advanced-git-sync@users.noreply.github.com'],
+        ['config', 'user.email', 'gitsync@users.noreply.github.com'],
         { cwd: tmpDir }
       )
 

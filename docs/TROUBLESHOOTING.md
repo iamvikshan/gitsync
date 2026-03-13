@@ -32,7 +32,7 @@ refusing to allow a Personal Access Token to create or update workflow `.github/
 
 3. **Update your workflow:**
    ```yaml
-   - uses: iamvikshan/advanced-git-sync@v1.0.0
+   - uses: iamvikshan/gitsync@v1.0.0
      with:
        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
        GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -549,7 +549,7 @@ curl -H "Authorization: token YOUR_GITHUB_TOKEN" \
 ### Before Opening an Issue
 
 1. **Check existing issues:**
-   - [Search existing issues](https://github.com/iamvikshan/advanced-git-sync/issues)
+   - [Search existing issues](https://github.com/iamvikshan/gitsync/issues)
    - Look for similar problems and solutions
 
 2. **Gather information:**
@@ -595,8 +595,8 @@ gitlab:
 
 ### Community Support
 
-- 💬 [GitHub Discussions](https://github.com/iamvikshan/advanced-git-sync/discussions) - Ask questions and share ideas
-- 🐛 [Report Issues](https://github.com/iamvikshan/advanced-git-sync/issues) - Bug reports and feature requests
+- 💬 [GitHub Discussions](https://github.com/iamvikshan/gitsync/discussions) - Ask questions and share ideas
+- 🐛 [Report Issues](https://github.com/iamvikshan/gitsync/issues) - Bug reports and feature requests
 
 ## Next Steps
 

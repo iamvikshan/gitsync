@@ -47,7 +47,7 @@ export class RepoHelper {
         name: this.repo.repo,
         private: true,
         description:
-          'Repository automatically created by advanced-git-sync for synchronization',
+          'Repository automatically created by gitsync for synchronization',
         auto_init: true,
         has_issues: true,
         has_projects: false,
@@ -137,7 +137,7 @@ export class RepoHelper {
         path: this.repo.repo,
         visibility: 'private',
         description:
-          'Repository automatically created by advanced-git-sync for synchronization',
+          'Repository automatically created by gitsync for synchronization',
         initialize_with_readme: true,
         issues_enabled: true,
         merge_requests_enabled: true,
