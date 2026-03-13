@@ -1,7 +1,7 @@
 {
   "name": "@iamvikshan/git-sync",
   "description": "Synchronize GitHub repository with GitLab including branches, PRs, and issues",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/",

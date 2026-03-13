@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 
 
+# [v1.0.1](https://github.com/iamvikshan/gitsync/compare/v1.0.0...v1.0.1) (2026-03-13)
+
+
+
+## [1.0.1](https://github.com/iamvikshan/gitsync/compare/v1.0.0...v1.0.1) (2026-03-13)
+
+### Bug Fixes
+
+* update user configuration from 'advanced-git-sync' to 'gitsync' ([ac54285](https://github.com/iamvikshan/gitsync/commit/ac54285bea113f323ac74f0c02f3d5655fc51230))
+
 # v1.0.0 (2026-03-12)
 
 
