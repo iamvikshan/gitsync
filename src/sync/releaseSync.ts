@@ -306,7 +306,7 @@ export async function syncReleases(
         batch.map(async analysis => {
           try {
             const release = analysis.release
-            let releaseToSync = { ...release }
+            const releaseToSync = { ...release }
 
             // Handle special strategies
             if (analysis.strategy === 'point-to-latest') {

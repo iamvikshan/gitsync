@@ -283,7 +283,7 @@ Failed to merge MR #18: 405 Method Not Allowed
 
 **Symptoms:**
 
-- Dependabot/renovate branches keep getting recreated after deletion
+- Dependabot/renovate/copilot/qodana branches keep getting recreated after deletion
 - Bot branches exist in target but not source (orphaned branches)
 - Bot branches sync when they shouldn't (or vice versa)
 
@@ -301,7 +301,7 @@ Failed to merge MR #18: 405 Method Not Allowed
 2. **Verify bot patterns match your branches:**
 
    ```yaml
-   # Default patterns include: dependabot/*, renovate/*, copilot/*, feature/*, etc.
+   # Default patterns include: dependabot/*, renovate/*, copilot/*, qodana/*, feature/*, etc.
    # To see what's detected as bot branches, check the action logs
    ```
 

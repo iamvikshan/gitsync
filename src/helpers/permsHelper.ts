@@ -64,7 +64,8 @@ export class PermsHelper {
       core.info('\x1b[32m✓ Repository Access Verified\x1b[0m')
     } catch (error) {
       throw new Error(
-        `${ErrorCodes.EGHUB}: ${error instanceof Error ? error.message : String(error)}`
+        `${ErrorCodes.EGHUB}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -119,7 +120,8 @@ export class PermsHelper {
     } catch (error) {
       core.error('GitLab access validation failed')
       throw new Error(
-        `${ErrorCodes.EGLAB}: ${error instanceof Error ? error.message : String(error)}`
+        `${ErrorCodes.EGLAB}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }

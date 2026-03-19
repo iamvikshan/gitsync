@@ -1,4 +1,4 @@
-import { Repository } from '../../types'
+import { Repository, PlatformError } from '../../types'
 import * as core from '@actions/core'
 import { GitHub } from '@actions/github/lib/utils'
 import { Gitlab } from '@gitbeaker/core'
@@ -26,8 +26,9 @@ export class RepoHelper {
       const octokit = this.client as InstanceType<typeof GitHub>
       await octokit.rest.repos.get({ ...this.repo })
       return false
-    } catch (error: any) {
-      if (error.status === 404) {
+    } catch (error: unknown) {
+      const err = error as PlatformError
+      if (err.status === 404) {
         return await this.createGitHubRepository()
       }
       throw error
@@ -67,22 +68,26 @@ export class RepoHelper {
         `✓ Repository ${this.repo.owner}/${this.repo.repo} created successfully`
       )
       return true
-    } catch (error: any) {
-      if (error.status === 403) {
+    } catch (error: unknown) {
+      const err = error as PlatformError
+      if (err.status === 403) {
         throw new Error(
           `Insufficient permissions to create repository ${this.repo.owner}/${this.repo.repo}. ` +
-            'Ensure your token has the required "repo" scope.'
+            'Ensure your token has the required "repo" scope.',
+          { cause: error }
         )
-      } else if (error.status === 422) {
+      } else if (err.status === 422) {
         throw new Error(
           `Repository name "${this.repo.repo}" conflicts or validation failed. ` +
-            'This typically means the repository exists but is inaccessible due to permissions.'
+            'This typically means the repository exists but is inaccessible due to permissions.',
+          { cause: error }
         )
       } else {
         throw new Error(
           `Failed to create repository ${this.repo.owner}/${this.repo.repo}: ${
-            error.message || 'Unknown error'
-          }`
+            err.message || 'Unknown error'
+          }`,
+          { cause: error }
         )
       }
     }
@@ -93,8 +98,9 @@ export class RepoHelper {
       const octokit = this.client as InstanceType<typeof GitHub>
       await octokit.rest.orgs.get({ org: this.repo.owner })
       return true
-    } catch (error: any) {
-      if (error.status === 404) {
+    } catch (error: unknown) {
+      const err = error as PlatformError
+      if (err.status === 404) {
         return false
       }
       core.debug(
@@ -115,8 +121,9 @@ export class RepoHelper {
       }
 
       return project.id
-    } catch (error: any) {
-      if (error.response?.status === 404 || error.message?.includes('404')) {
+    } catch (error: unknown) {
+      const err = error as PlatformError
+      if (err.response?.status === 404 || err.message?.includes('404')) {
         return await this.createGitLabProject()
       }
       throw error
@@ -132,7 +139,7 @@ export class RepoHelper {
 
       const namespaceInfo = await this.findGitLabNamespace()
 
-      const projectConfig: any = {
+      const projectConfig: Record<string, unknown> = {
         name: this.repo.repo,
         path: this.repo.repo,
         visibility: 'private',
@@ -163,7 +170,9 @@ export class RepoHelper {
         projectConfig.namespace_id = namespaceInfo.id
       }
 
-      const createdProject = await gitlab.Projects.create(projectConfig)
+      const createdProject = (await gitlab.Projects.create(
+        projectConfig as unknown as Parameters<typeof gitlab.Projects.create>[0]
+      )) as { id?: number }
 
       if (!createdProject?.id) {
         throw new Error('Failed to get project ID from created project')
@@ -173,22 +182,26 @@ export class RepoHelper {
         `✓ Project ${this.repo.owner}/${this.repo.repo} created successfully with force push enabled`
       )
       return createdProject.id
-    } catch (error: any) {
-      if (error.response?.status === 403) {
+    } catch (error: unknown) {
+      const err = error as PlatformError
+      if (err.response?.status === 403) {
         throw new Error(
           `Insufficient permissions to create project ${this.repo.owner}/${this.repo.repo}. ` +
-            'Ensure your token has the required "api" scope.'
+            'Ensure your token has the required "api" scope.',
+          { cause: error }
         )
-      } else if (error.response?.status === 400) {
+      } else if (err.response?.status === 400) {
         throw new Error(
           `Project name "${this.repo.repo}" conflicts or validation failed. ` +
-            'This typically means the project exists but is inaccessible due to permissions.'
+            'This typically means the project exists but is inaccessible due to permissions.',
+          { cause: error }
         )
       } else {
         throw new Error(
           `Failed to create project ${this.repo.owner}/${this.repo.repo}: ${
-            error.message || 'Unknown error'
-          }`
+            err.message || 'Unknown error'
+          }`,
+          { cause: error }
         )
       }
     }

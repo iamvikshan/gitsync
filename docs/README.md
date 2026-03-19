@@ -90,7 +90,6 @@ docs/
 ## Getting Help
 
 - **Issues**: Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md) first
-- **Questions**: Open a
-  [GitHub Discussion](https://github.com/iamvikshan/gitsync/discussions)
+- **Questions**: Open a [GitHub Discussion](https://github.com/iamvikshan/gitsync/discussions)
 - **Bugs**: Report on [GitHub Issues](https://github.com/iamvikshan/gitsync/issues)
 - **Contributing**: See [contributing.md](contributing.md)

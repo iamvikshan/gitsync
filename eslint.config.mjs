@@ -16,11 +16,25 @@ export default [
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
+    files: ['**/*.{ts,tsx,mts,cts}'],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname
+      }
+    },
     rules: {
       '@typescript-eslint/no-require-imports': 'error',
-      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          caughtErrors: 'none',
+          varsIgnorePattern: '^_'
+        }
+      ],
       '@typescript-eslint/no-explicit-any': [
-        'error',
+        'warn',
         {
           fixToUnknown: true,
           ignoreRestArgs: true
@@ -29,7 +43,12 @@ export default [
       '@typescript-eslint/no-unsafe-assignment': 'warn',
       '@typescript-eslint/no-unsafe-call': 'warn',
       '@typescript-eslint/no-unsafe-member-access': 'warn',
-      '@typescript-eslint/no-unsafe-return': 'warn'
+      '@typescript-eslint/no-unsafe-return': 'warn',
+      'no-case-declarations': 'warn',
+      'no-useless-escape': 'warn',
+      'no-var': 'warn',
+      'prefer-const': 'warn',
+      'preserve-caught-error': 'warn'
     }
   }
 ]

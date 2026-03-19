@@ -39,50 +39,73 @@ export class PullRequestHelper {
       })
 
       const processedPRs = await Promise.all(
-        prs.map(async (pr: any) => {
-          const { data: comments } = await octokit.rest.issues.listComments({
-            ...this.repo,
-            issue_number: pr.number
-          })
+        prs.map(
+          async (pr: {
+            id: number
+            number: number
+            title: string
+            body: string | null
+            head: { ref: string }
+            base: { ref: string }
+            labels: Array<{ name: string }>
+            merged_at: string | null
+            state: string
+          }) => {
+            const { data: comments } = await octokit.rest.issues.listComments({
+              ...this.repo,
+              issue_number: pr.number
+            })
 
-          const { data: reviews } = await octokit.rest.pulls.listReviews({
-            ...this.repo,
-            pull_number: pr.number
-          })
+            const { data: reviews } = await octokit.rest.pulls.listReviews({
+              ...this.repo,
+              pull_number: pr.number
+            })
 
-          return {
-            id: pr.id,
-            number: pr.number,
-            title: pr.title,
-            description: pr.body || '',
-            sourceBranch: pr.head.ref,
-            targetBranch: pr.base.ref,
-            labels: pr.labels.map((label: any) => label.name),
-            state: pr.merged_at
-              ? 'merged'
-              : (pr.state as 'open' | 'closed' | 'merged'),
-            comments: comments.map(
-              (comment: any): Comment => ({
-                id: comment.id,
-                body: comment.body || '',
-                author: comment.user?.login || '',
-                createdAt: comment.created_at
-              })
-            ),
-            reviews: reviews.map(
-              (review: any): Review => ({
-                id: review.id,
-                state: review.state.toLowerCase() as
-                  | 'approved'
-                  | 'changes_requested'
-                  | 'commented',
-                body: review.body || '',
-                author: review.user?.login || '',
-                createdAt: review.submitted_at || ''
-              })
-            )
+            return {
+              id: pr.id,
+              number: pr.number,
+              title: pr.title,
+              description: pr.body || '',
+              sourceBranch: pr.head.ref,
+              targetBranch: pr.base.ref,
+              labels: pr.labels.map(label => label.name),
+              state: pr.merged_at
+                ? 'merged'
+                : (pr.state as 'open' | 'closed' | 'merged'),
+              comments: comments.map(
+                (comment: {
+                  id: number
+                  body?: string | null
+                  user?: { login?: string } | null
+                  created_at: string
+                }): Comment => ({
+                  id: comment.id,
+                  body: comment.body || '',
+                  author: comment.user?.login || '',
+                  createdAt: comment.created_at
+                })
+              ),
+              reviews: reviews.map(
+                (review: {
+                  id: number
+                  state: string
+                  body: string | null
+                  user?: { login?: string } | null
+                  submitted_at?: string | null
+                }): Review => ({
+                  id: review.id,
+                  state: review.state.toLowerCase() as
+                    | 'approved'
+                    | 'changes_requested'
+                    | 'commented',
+                  body: review.body || '',
+                  author: review.user?.login || '',
+                  createdAt: review.submitted_at || ''
+                })
+              )
+            }
           }
-        })
+        )
       )
 
       core.info(
@@ -143,7 +166,12 @@ export class PullRequestHelper {
                   ? 'open'
                   : 'closed') as 'merged' | 'open' | 'closed',
               comments: comments.map(
-                (comment: any): Comment => ({
+                (comment: {
+                  id: number
+                  body: string | null
+                  author?: { username?: string; name?: string }
+                  created_at: string
+                }): Comment => ({
                   id: comment.id,
                   body: comment.body || '',
                   author:
@@ -208,7 +236,8 @@ export class PullRequestHelper {
       }
     } catch (error) {
       throw new Error(
-        `Failed to create PR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create PR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -247,7 +276,8 @@ export class PullRequestHelper {
       }
     } catch (error) {
       throw new Error(
-        `Failed to create MR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create MR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -271,7 +301,14 @@ export class PullRequestHelper {
         pull_number: number
       })
 
-      const updatePayload: any = {
+      const updatePayload: {
+        owner: string
+        repo: string
+        pull_number: number
+        title: string
+        body: string
+        state?: string
+      } = {
         ...this.repo,
         pull_number: number,
         title: pr.title,
@@ -297,7 +334,8 @@ export class PullRequestHelper {
       })
     } catch (error) {
       throw new Error(
-        `Failed to update PR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update PR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -352,7 +390,8 @@ export class PullRequestHelper {
       }
     } catch (error) {
       throw new Error(
-        `Failed to update MR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update MR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -375,7 +414,8 @@ export class PullRequestHelper {
       })
     } catch (error) {
       throw new Error(
-        `Failed to close PR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to close PR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -389,7 +429,8 @@ export class PullRequestHelper {
       })
     } catch (error) {
       throw new Error(
-        `Failed to close MR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to close MR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }

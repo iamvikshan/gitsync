@@ -280,6 +280,7 @@ github:
         patterns:
           - 'dependabot/*'
           - 'renovate/*'
+          - 'copilot/*'
           - 'my-company-bot/*'
 ```
 

@@ -97,7 +97,7 @@ export class ReleaseHelper {
       const releases = await gitlab.ProjectReleases.all(projectId)
 
       const processedReleases = releases.map(
-        (release: any): Release => ({
+        (release): Release => ({
           id: release.tag_name,
           tag: release.tag_name,
           name: release.name || release.tag_name,
@@ -154,7 +154,8 @@ export class ReleaseHelper {
       throw new Error(
         `Failed to create release ${release.tag}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error }
       )
     }
   }
@@ -172,7 +173,12 @@ export class ReleaseHelper {
         core.debug(`Tag ${release.tag} does not exist in GitLab repository`)
       }
 
-      const releaseParams: any = {
+      const releaseParams: {
+        tag_name: string
+        name: string
+        description: string
+        ref?: string
+      } = {
         tag_name: release.tag,
         name: release.name,
         description: release.body
@@ -192,7 +198,8 @@ export class ReleaseHelper {
       release.id = createdRelease.tag_name
     } catch (error) {
       throw new Error(
-        `Failed to create release ${release.tag}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create release ${release.tag}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -227,7 +234,8 @@ export class ReleaseHelper {
       throw new Error(
         `Failed to update release ${release.tag}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error }
       )
     }
   }
@@ -242,7 +250,8 @@ export class ReleaseHelper {
       })
     } catch (error) {
       throw new Error(
-        `Failed to update release ${release.tag}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update release ${release.tag}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -280,7 +289,8 @@ export class ReleaseHelper {
       throw new Error(
         `Failed to download asset ${asset.name}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error }
       )
     }
   }
@@ -298,7 +308,8 @@ export class ReleaseHelper {
       return Buffer.from(arrayBuffer)
     } catch (error) {
       throw new Error(
-        `Failed to download asset ${asset.name}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to download asset ${asset.name}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -339,7 +350,8 @@ export class ReleaseHelper {
       throw new Error(
         `Failed to upload asset ${asset.name}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error }
       )
     }
   }
@@ -363,7 +375,8 @@ export class ReleaseHelper {
       )
     } catch (error) {
       throw new Error(
-        `Failed to upload asset ${asset.name}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to upload asset ${asset.name}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }

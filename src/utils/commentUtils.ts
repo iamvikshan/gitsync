@@ -70,7 +70,7 @@ export class CommentFormatter {
    */
   private static formatQuotedComment(
     comment: Comment,
-    repoInfo: any,
+    repoInfo: unknown,
     platform: string,
     issueNumber: number,
     options: CommentSyncOptions
@@ -86,7 +86,7 @@ export class CommentFormatter {
       body = this.preserveMarkdownFormatting(body)
     }
 
-    let quotedBody = body
+    const quotedBody = body
       .split('\n')
       .map(line => `> ${line}`)
       .join('\n')
@@ -105,7 +105,7 @@ export class CommentFormatter {
    */
   private static formatInlineComment(
     comment: Comment,
-    repoInfo: any,
+    repoInfo: unknown,
     platform: string,
     issueNumber: number,
     options: CommentSyncOptions
@@ -129,7 +129,7 @@ export class CommentFormatter {
    */
   private static formatMinimalComment(
     comment: Comment,
-    repoInfo: any,
+    repoInfo: unknown,
     platform: string,
     issueNumber: number,
     options: CommentSyncOptions

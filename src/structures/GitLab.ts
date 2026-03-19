@@ -1,6 +1,16 @@
 import * as core from '@actions/core'
 import { Gitlab } from '@gitbeaker/rest'
-import { Repository, Config, IClient, BranchFilterOptions } from '../../types'
+import {
+  Repository,
+  Config,
+  IClient,
+  BranchFilterOptions,
+  PullRequest,
+  Issue,
+  Release,
+  ReleaseAsset,
+  Tag
+} from '../../types'
 import {
   BranchHelper,
   IssueHelper,
@@ -120,7 +130,8 @@ export class GitLabClient implements IClient {
       throw new Error(
         `Failed to fetch project ID for ${this.repo.owner}/${this.repo.repo}: ${
           error instanceof Error ? error.message : 'Unknown error'
-        }`
+        }`,
+        { cause: error }
       )
     }
   }
@@ -186,7 +197,10 @@ export class GitLabClient implements IClient {
     }
   }
 
-  async getRecentCommits(branchName: string, limit: number): Promise<any[]> {
+  async getRecentCommits(
+    branchName: string,
+    limit: number
+  ): Promise<unknown[]> {
     try {
       const projectId = await this.getProjectId()
       const commits = await this.gitlab.Commits.all(projectId, {
@@ -195,7 +209,9 @@ export class GitLabClient implements IClient {
       })
       return commits
     } catch (error) {
-      throw new Error(`Failed to get recent commits: ${error}`)
+      throw new Error(`Failed to get recent commits: ${error}`, {
+        cause: error
+      })
     }
   }
 
@@ -220,11 +236,11 @@ export class GitLabClient implements IClient {
     return this.mergeRequest.syncPullRequests()
   }
 
-  async createPullRequest(pr: any) {
+  async createPullRequest(pr: PullRequest) {
     return this.mergeRequest.createPullRequest(pr)
   }
 
-  async updatePullRequest(number: number, pr: any) {
+  async updatePullRequest(number: number, pr: PullRequest) {
     return this.mergeRequest.updatePullRequest(number, pr)
   }
 
@@ -237,11 +253,11 @@ export class GitLabClient implements IClient {
     return this.issues.syncIssues()
   }
 
-  async createIssue(issue: any) {
+  async createIssue(issue: Issue) {
     return this.issues.createIssue(issue)
   }
 
-  async updateIssue(issueNumber: number, issue: any) {
+  async updateIssue(issueNumber: number, issue: Issue) {
     return this.issues.updateIssue(issueNumber, issue)
   }
 
@@ -250,19 +266,23 @@ export class GitLabClient implements IClient {
     return this.release.syncReleases()
   }
 
-  async createRelease(release: any) {
+  async createRelease(release: Release) {
     return this.release.createRelease(release)
   }
 
-  async updateRelease(release: any) {
+  async updateRelease(release: Release) {
     return this.release.updateRelease(release)
   }
 
-  async downloadReleaseAsset(releaseId: string, asset: any) {
+  async downloadReleaseAsset(releaseId: string, asset: ReleaseAsset) {
     return this.release.downloadReleaseAsset(releaseId, asset)
   }
 
-  async uploadReleaseAsset(releaseId: string, asset: any, content?: Buffer) {
+  async uploadReleaseAsset(
+    releaseId: string,
+    asset: ReleaseAsset,
+    content?: Buffer
+  ) {
     return this.release.uploadReleaseAsset(releaseId, asset, content)
   }
 
@@ -271,11 +291,11 @@ export class GitLabClient implements IClient {
     return this.tags.syncTags()
   }
 
-  async createTag(tag: any) {
+  async createTag(tag: Tag) {
     return this.tags.createTag(tag)
   }
 
-  async updateTag(tag: any) {
+  async updateTag(tag: Tag) {
     return this.tags.updateTag(tag)
   }
 }

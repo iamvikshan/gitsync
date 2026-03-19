@@ -2,7 +2,7 @@ import * as core from '@actions/core'
 import * as fs from 'fs'
 import * as yaml from 'js-yaml'
 import { ConfigSchema, Config } from '../../types'
-import { ZodError } from 'zod'
+import { ZodError, type ZodIssue } from 'zod'
 import { getDefaultConfig } from '@utils/defaults'
 import { getActionInput, logConfigDetails } from './inputs'
 import { processConfig } from './reason'
@@ -14,13 +14,13 @@ import { mergeWithDefaults } from '../utils/configMerger'
  * Normalize YAML arrays that might be parsed as objects
  * This handles cases where YAML arrays like ["item1", "item2"] get parsed as objects
  */
-function normalizeYamlArrays(obj: any): any {
+function normalizeYamlArrays(obj: unknown): unknown {
   if (Array.isArray(obj)) {
     return obj.map(normalizeYamlArrays)
   }
 
   if (obj && typeof obj === 'object') {
-    const result: any = {}
+    const result: Record<string, unknown> = {}
     for (const [key, value] of Object.entries(obj)) {
       // Check if this looks like an array that was parsed as an object
       if (
@@ -108,7 +108,7 @@ export async function loadConfig(): Promise<Config> {
     }
 
     // Post-process the parsed config to handle YAML array parsing issues
-    parsedConfig = normalizeYamlArrays(parsedConfig)
+    parsedConfig = normalizeYamlArrays(parsedConfig) as Record<string, unknown>
 
     // If parsed config is null or empty
     if (!parsedConfig || Object.keys(parsedConfig).length === 0) {
@@ -124,7 +124,7 @@ export async function loadConfig(): Promise<Config> {
       const mergedConfig = mergeWithDefaults(reasonedConfig, defaultConfig)
 
       // Validate the merged config
-      let config = ConfigSchema.parse(mergedConfig)
+      const config = ConfigSchema.parse(mergedConfig)
 
       // Validate and augment tokens
       const validatedConfig = await validateConfig(config)
@@ -139,7 +139,7 @@ export async function loadConfig(): Promise<Config> {
       if (error instanceof ZodError) {
         // Handle Zod validation errors
         const errorMessages = error.issues
-          .map((err: any) => `${err.path.join('.')}: ${err.message}`)
+          .map((err: ZodIssue) => `${err.path.join('.')}: ${err.message}`)
           .join('\n')
 
         core.setFailed(

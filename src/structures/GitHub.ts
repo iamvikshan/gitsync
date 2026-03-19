@@ -124,7 +124,10 @@ export class GitHubClient implements IClient {
     }
   }
 
-  async getRecentCommits(branchName: string, limit: number): Promise<any[]> {
+  async getRecentCommits(
+    branchName: string,
+    limit: number
+  ): Promise<unknown[]> {
     try {
       const { data: commits } = await this.octokit.rest.repos.listCommits({
         ...this.repo,
@@ -133,7 +136,9 @@ export class GitHubClient implements IClient {
       })
       return commits
     } catch (error) {
-      throw new Error(`Failed to get recent commits: ${error}`)
+      throw new Error(`Failed to get recent commits: ${error}`, {
+        cause: error
+      })
     }
   }
 

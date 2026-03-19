@@ -107,7 +107,8 @@ export class TagHelper {
       const tags = await gitlab.Tags.all(projectId)
 
       if (tags.length > 0 && !this.repoPath) {
-        const apiUrl = (tags[0] as any)._links?.self || ''
+        const apiUrl =
+          (tags[0] as { _links?: { self?: string } })._links?.self || ''
         const match = apiUrl.match(/projects\/(.+?)\/repository/)
         if (match) {
           this.repoPath = decodeURIComponent(match[1])
@@ -154,7 +155,8 @@ export class TagHelper {
         })
       } catch (error) {
         throw new Error(
-          `Commit ${tag.commitSha} does not exist in GitHub repository`
+          `Commit ${tag.commitSha} does not exist in GitHub repository`,
+          { cause: error }
         )
       }
 
@@ -167,7 +169,8 @@ export class TagHelper {
       throw new Error(
         `Failed to create tag ${tag.name}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error }
       )
     }
   }
@@ -181,7 +184,8 @@ export class TagHelper {
         await gitlab.Commits.show(projectId, tag.commitSha)
       } catch (error) {
         throw new Error(
-          `Commit ${tag.commitSha} does not exist in GitLab repository`
+          `Commit ${tag.commitSha} does not exist in GitLab repository`,
+          { cause: error }
         )
       }
 
@@ -189,7 +193,9 @@ export class TagHelper {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error)
-      throw new Error(`Failed to create tag ${tag.name}: ${errorMessage}`)
+      throw new Error(`Failed to create tag ${tag.name}: ${errorMessage}`, {
+        cause: error
+      })
     }
   }
 
@@ -214,7 +220,8 @@ export class TagHelper {
       throw new Error(
         `Failed to update tag ${tag.name}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error }
       )
     }
   }
@@ -228,7 +235,8 @@ export class TagHelper {
         await gitlab.Commits.show(projectId, tag.commitSha)
       } catch (error) {
         throw new Error(
-          `Commit ${tag.commitSha} does not exist in GitLab repository`
+          `Commit ${tag.commitSha} does not exist in GitLab repository`,
+          { cause: error }
         )
       }
 
@@ -242,7 +250,9 @@ export class TagHelper {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error)
-      throw new Error(`Failed to update tag ${tag.name}: ${errorMessage}`)
+      throw new Error(`Failed to update tag ${tag.name}: ${errorMessage}`, {
+        cause: error
+      })
     }
   }
 }

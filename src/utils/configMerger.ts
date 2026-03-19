@@ -12,7 +12,7 @@ export function mergeWithDefaults(
   defaultConfig: Config
 ): Config {
   // Custom merge array function to handle arrays in config
-  const mergeArray = (target: any[], source: any[]) => source
+  const mergeArray = (target: unknown[], source: unknown[]) => source
 
   return deepmerge(defaultConfig, userConfig, {
     arrayMerge: mergeArray,

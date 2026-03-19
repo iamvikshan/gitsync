@@ -14,7 +14,7 @@ export function getActionInput(name: string, required = false): string {
 }
 
 // Utility function to safely log configuration details
-export function logConfigDetails(config: Partial<Config>, hideTokens = true) {
+export function logConfigDetails(config: Partial<Config>, _hideTokens = true) {
   // Create a deep copy to avoid mutating the original config
   const safeConfig = JSON.parse(JSON.stringify(config))
 

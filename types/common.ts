@@ -105,3 +105,9 @@ export interface BranchFilterOptions {
   includeProtected?: boolean
   pattern?: string
 }
+
+export interface PlatformError {
+  status?: number
+  message?: string
+  response?: { status?: number }
+}

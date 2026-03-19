@@ -175,7 +175,7 @@ pattern: "main|dev"    # Multiple branches
 
 **Default Bot Patterns** (when `patterns: []`):
 
-- `dependabot/*`, `renovate/*`, `copilot/*`
+- `dependabot/*`, `renovate/*`, `copilot/*`, `qodana/*`
 - `feature/*`, `fix/*`, `hotfix/*`, `bugfix/*`, `chore/*`, `docs/*`
 - `refactor/*`, `test/*`, `ci/*`, `build/*`, `perf/*`, `style/*`
 - `revert-*`, `temp-*`, `wip-*`, `draft-*`

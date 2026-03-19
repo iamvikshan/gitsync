@@ -31,7 +31,7 @@ gitlab:
       botBranches:
         strategy: "delete-orphaned" # delete-orphaned | sync | skip
         patterns: [] # Empty = use defaults, populated = override defaults entirely
-        # Default patterns: dependabot/*, renovate/*, copilot/*, feature/*, fix/*, etc.
+        # Default patterns: dependabot/*, renovate/*, copilot/*, feature/*, fix/*, qodana/* etc.
 
     # 🟡 HIGH: Core features (enabled by default) - uncomment to customize
     tags:
@@ -96,7 +96,7 @@ github:
       botBranches:
         strategy: "delete-orphaned" # delete-orphaned | sync | skip
         patterns: [] # Empty = use defaults, populated = override defaults entirely
-        # Default patterns: dependabot/*, renovate/*, copilot/*, feature/*, fix/*, etc.
+        # Default patterns: dependabot/*, renovate/*, copilot/*, feature/*, fix/*, qodana/* etc.
 
     # 🟡 HIGH: Core features (enabled by default) - uncomment to customize
     tags:

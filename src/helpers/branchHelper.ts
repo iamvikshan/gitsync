@@ -226,7 +226,8 @@ export class BranchHelper {
         await exec.exec('git', ['fetch', 'gitlab', commitSha], { cwd: tmpDir })
       } catch (fetchError) {
         throw new Error(
-          `Failed to fetch commit ${commitSha} from GitLab: ${String(fetchError)}`
+          `Failed to fetch commit ${commitSha} from GitLab: ${String(fetchError)}`,
+          { cause: fetchError }
         )
       }
 
@@ -245,14 +246,19 @@ export class BranchHelper {
         const errorStr = String(pushError)
         if (errorStr.includes('workflow') && errorStr.includes('scope')) {
           throw new Error(
-            `Failed to push to GitHub: Token lacks 'workflow' scope. Please use a Personal Access Token with workflow scope instead of GITHUB_TOKEN.`
+            `Failed to push to GitHub: Token lacks 'workflow' scope. Please use a Personal Access Token with workflow scope instead of GITHUB_TOKEN.`,
+            { cause: pushError }
           )
         }
-        throw new Error(`Failed to push branch ${name} to GitHub: ${errorStr}`)
+        throw new Error(
+          `Failed to push branch ${name} to GitHub: ${errorStr}`,
+          { cause: pushError }
+        )
       }
     } catch (error) {
       throw new Error(
-        `Failed to update branch ${name} on GitHub: ${String(error)}`
+        `Failed to update branch ${name} on GitHub: ${String(error)}`,
+        { cause: error }
       )
     } finally {
       if (fs.existsSync(tmpDir)) {
@@ -303,7 +309,8 @@ export class BranchHelper {
         await exec.exec('git', ['fetch', 'github', commitSha], { cwd: tmpDir })
       } catch (fetchError) {
         throw new Error(
-          `Failed to fetch commit ${commitSha} from GitHub: ${String(fetchError)}`
+          `Failed to fetch commit ${commitSha} from GitHub: ${String(fetchError)}`,
+          { cause: fetchError }
         )
       }
 
@@ -324,14 +331,19 @@ export class BranchHelper {
         const errorStr = String(pushError)
         if (errorStr.includes('workflow') && errorStr.includes('scope')) {
           throw new Error(
-            `Failed to push to GitLab: GitHub token lacks 'workflow' scope. Please use a Personal Access Token with workflow scope.`
+            `Failed to push to GitLab: GitHub token lacks 'workflow' scope. Please use a Personal Access Token with workflow scope.`,
+            { cause: pushError }
           )
         }
-        throw new Error(`Failed to push branch ${name} to GitLab: ${errorStr}`)
+        throw new Error(
+          `Failed to push branch ${name} to GitLab: ${errorStr}`,
+          { cause: pushError }
+        )
       }
     } catch (error) {
       throw new Error(
-        `Failed to update branch ${name} on GitLab: ${String(error)}`
+        `Failed to update branch ${name} on GitLab: ${String(error)}`,
+        { cause: error }
       )
     } finally {
       if (fs.existsSync(tmpDir)) {
@@ -355,7 +367,8 @@ export class BranchHelper {
         const errorMessage =
           error instanceof Error ? error.message : String(error)
         throw new Error(
-          `Failed to delete branch ${name} from GitLab: ${errorMessage}`
+          `Failed to delete branch ${name} from GitLab: ${errorMessage}`,
+          { cause: error }
         )
       }
     } else {

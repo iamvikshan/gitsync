@@ -16,8 +16,8 @@ repositories. Keep your projects in sync across platforms automatically.
 - 🔄 **Bi-directional sync** between GitHub and GitLab
 - 🌳 **Branches, PRs/MRs, issues, releases, and tags**
 - 💬 **Enhanced comment synchronization** with proper attribution
-- 🤖 **Smart bot branch handling** - configurable cleanup of dependabot, renovate, and other bot
-  branches
+- 🤖 **Smart bot branch handling** - configurable cleanup of dependabot, renovate, qodana, copilot
+  and other bot branches
 - ⚙️ **Highly configurable** with logical priority-based defaults
 - 🔒 **Secure** with token-based authentication
 - 🏷️ **Smart labeling** of synced content
@@ -118,10 +118,10 @@ For detailed configuration and advanced usage:
 ## 🤝 Need Help?
 
 - 📋 [Configuration Examples](docs/sync-config-example.yml) - Ready-to-use configuration templates
-- 🐛 [Report Issues](https://github.com/iamvikshan/gitsync/issues) - Found a bug or
-  have a feature request?
-- 💬 [Discussions](https://github.com/iamvikshan/gitsync/discussions) - Ask questions
-  and share ideas
+- 🐛 [Report Issues](https://github.com/iamvikshan/gitsync/issues) - Found a bug or have a feature
+  request?
+- 💬 [Discussions](https://github.com/iamvikshan/gitsync/discussions) - Ask questions and share
+  ideas
 
 ## 🤝 Contributing
 
@@ -131,8 +131,8 @@ details.
 
 ## 📄 License
 
-MIT License - see the
-[LICENSE](https://github.com/iamvikshan/.github/blob/main/.github/LICENSE.md) file for details.
+MIT License - see the [LICENSE](https://github.com/iamvikshan/.github/blob/main/.github/LICENSE.md)
+file for details.
 
 ---
 

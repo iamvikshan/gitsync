@@ -93,7 +93,9 @@ export async function validateConfig(config: Config): Promise<Config> {
       const needsGitLabToken =
         config.github.enabled &&
         config.gitlab.sync &&
-        Object.values(config.gitlab.sync).some((entity: any) => entity?.enabled)
+        Object.values(config.gitlab.sync).some(
+          (entity: { enabled: boolean }) => entity?.enabled
+        )
 
       if (needsGitLabToken && !token) {
         errors.push(

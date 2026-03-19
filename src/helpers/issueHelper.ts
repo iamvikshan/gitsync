@@ -45,23 +45,41 @@ export class IssueHelper {
 
       const processedIssues: Issue[] = await Promise.all(
         issues
-          .filter((issue: any) => !issue.pull_request)
-          .map(async (issue: any): Promise<Issue> => {
-            let comments: Comment[] = []
+          .filter(
+            (issue: {
+              pull_request?: unknown
+              number: number
+              title: string
+              body: string | null
+              labels: Array<{ name: string }>
+              state: string
+            }) => !issue.pull_request
+          )
+          .map(
+            async (issue: {
+              pull_request?: unknown
+              number: number
+              title: string
+              body: string | null
+              labels: Array<{ name: string }>
+              state: string
+            }): Promise<Issue> => {
+              let comments: Comment[] = []
 
-            if (commentSyncOptions.enabled) {
-              comments = await this.fetchGitHubIssueComments(issue.number)
-            }
+              if (commentSyncOptions.enabled) {
+                comments = await this.fetchGitHubIssueComments(issue.number)
+              }
 
-            return {
-              title: issue.title,
-              body: issue.body || '',
-              labels: LabelHelper.combineLabels(issue.labels, 'github'),
-              number: issue.number,
-              state: issue.state as 'open' | 'closed',
-              comments
+              return {
+                title: issue.title,
+                body: issue.body || '',
+                labels: LabelHelper.combineLabels(issue.labels, 'github'),
+                number: issue.number,
+                state: issue.state as 'open' | 'closed',
+                comments
+              }
             }
-          })
+          )
       )
 
       core.info(
@@ -151,7 +169,7 @@ export class IssueHelper {
       })
 
       return comments.map(
-        (comment): Comment => ({
+        (comment: (typeof comments)[number]): Comment => ({
           id: comment.id,
           body: comment.body ?? '',
           author: comment.user?.login ?? '',
@@ -177,9 +195,9 @@ export class IssueHelper {
       const notes = await gitlab.IssueNotes.all(projectId, issueIid)
 
       return notes
-        .filter((note: any) => !note.system)
+        .filter(note => !note.system)
         .map(
-          (note: any): Comment => ({
+          (note): Comment => ({
             id: note.id,
             body: note.body || '',
             author: note.author?.username || '',
@@ -218,7 +236,8 @@ export class IssueHelper {
       })
     } catch (error) {
       throw new Error(
-        `Failed to create issue "${issue.title}": ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create issue "${issue.title}": ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -242,7 +261,8 @@ export class IssueHelper {
       }
     } catch (error) {
       throw new Error(
-        `Failed to create issue "${issue.title}": ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create issue "${issue.title}": ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -275,7 +295,8 @@ export class IssueHelper {
       throw new Error(
         `Failed to update issue #${issueNumber}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error }
       )
     }
   }
@@ -297,7 +318,8 @@ export class IssueHelper {
       })
     } catch (error) {
       throw new Error(
-        `Failed to update issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -323,7 +345,8 @@ export class IssueHelper {
       })
     } catch (error) {
       throw new Error(
-        `Failed to create comment on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create comment on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -338,7 +361,8 @@ export class IssueHelper {
       await gitlab.IssueNotes.create(projectId, issueNumber, body)
     } catch (error) {
       throw new Error(
-        `Failed to create comment on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create comment on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -377,7 +401,8 @@ export class IssueHelper {
       })
     } catch (error) {
       throw new Error(
-        `Failed to update comment #${commentId}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update comment #${commentId}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }
@@ -395,7 +420,8 @@ export class IssueHelper {
       })
     } catch (error) {
       throw new Error(
-        `Failed to update comment #${noteId} on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update comment #${noteId} on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
       )
     }
   }

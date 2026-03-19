@@ -8,6 +8,7 @@ export const botDefaults = [
   'dependabot/*', // Dependabot branches
   'renovate/*', // Renovate branches
   'copilot/*', // GitHub Copilot branches
+  'qodana/*', // Qodana branches
   'feature/*', // Feature branches
   'fix/*', // Fix branches
   'hotfix/*', // Hotfix branches

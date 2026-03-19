@@ -136,7 +136,7 @@ export async function syncIssues(
             }
             break
           }
-          case 'update':
+          case 'update': {
             core.info(`🔄 Updating: "${comparison.sourceIssue.title}"`)
             // Add source link to updated issues as well
             const sourceLink = await prepareSourceLink(
@@ -165,6 +165,7 @@ export async function syncIssues(
               )
             }
             break
+          }
           case 'skip':
             core.debug(
               `⏭️ Skipping "${comparison.sourceIssue.title}" - already in sync`
@@ -322,7 +323,9 @@ async function getExistingTargetComments(
     // Since getProjectId is private, we'll use a workaround
     try {
       // Try to fetch comments directly through the issues helper
-      const projectId = await (target as any).getProjectId()
+      const projectId = await (
+        target as unknown as { getProjectId: () => Promise<number> }
+      ).getProjectId()
       return await target.issues.fetchIssueComments(issueNumber, projectId)
     } catch (error) {
       core.warning(`Failed to fetch existing comments: ${error}`)

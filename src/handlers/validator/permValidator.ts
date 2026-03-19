@@ -1,12 +1,12 @@
 // src/handlers/validator/permValidator.ts
-import { PermissionCheck } from '../../../types'
+import { PermissionCheck, SyncConfig } from '../../../types'
 import * as core from '@actions/core'
 
 export class PermissionValidator {
   static async validatePlatformPermissions(
     platform: 'github' | 'gitlab',
     checks: PermissionCheck[],
-    sync: any,
+    sync: SyncConfig | undefined,
     repoInfo: string
   ): Promise<void> {
     core.startGroup(`🔍 ${platform.toUpperCase()} Permissions Validation`)
@@ -15,7 +15,7 @@ export class PermissionValidator {
     )
 
     for (const check of checks) {
-      if (sync?.[check.feature as keyof typeof sync]?.enabled) {
+      if (sync?.[check.feature as keyof SyncConfig]?.enabled) {
         try {
           await check.check()
           core.info(`\x1b[32m✓ ${check.feature} permissions verified\x1b[0m`)

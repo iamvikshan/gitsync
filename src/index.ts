@@ -207,7 +207,7 @@ async function run(): Promise<void> {
       )
 
       // Execute operations in phases to respect dependencies
-      const results: any[] = []
+      const results: { name: string; status: string; error?: string }[] = []
 
       // PHASE 1: Core operations (branches) - sequential within phase
       const enabledCoreOps = coreOperations.filter(op => op.enabled)

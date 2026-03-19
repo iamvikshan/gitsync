@@ -475,7 +475,15 @@ export class TimelineManager {
       const commits = await client.getRecentCommits(branchName, limit)
 
       if (client instanceof GitHubClient) {
-        return commits.map(commit => ({
+        return (
+          commits as {
+            sha: string
+            commit: {
+              message: string
+              author?: { name?: string; date?: string }
+            }
+          }[]
+        ).map(commit => ({
           sha: commit.sha,
           message: commit.commit.message,
           author: commit.commit.author?.name || 'Unknown',
@@ -483,7 +491,14 @@ export class TimelineManager {
           exists: true
         }))
       } else {
-        return commits.map(commit => ({
+        return (
+          commits as {
+            id: string
+            message: string
+            author_name: string
+            created_at: string
+          }[]
+        ).map(commit => ({
           sha: commit.id,
           message: commit.message,
           author: commit.author_name,
@@ -571,16 +586,16 @@ export class TimelineManager {
 
     // Common semantic patterns in commit messages
     const patterns = [
-      /^(feat|feature)[\(\:]/, // Feature commits
-      /^(fix|bugfix)[\(\:]/, // Bug fixes
-      /^(docs?)[\(\:]/, // Documentation
-      /^(style|format)[\(\:]/, // Style changes
-      /^(refactor)[\(\:]/, // Refactoring
-      /^(test)[\(\:]/, // Tests
-      /^(chore)[\(\:]/, // Chores
-      /^(build|ci)[\(\:]/, // Build/CI
-      /^(perf|performance)[\(\:]/, // Performance
-      /^(revert)[\(\:]/, // Reverts
+      /^(feat|feature)[(:]/, // Feature commits
+      /^(fix|bugfix)[(:]/, // Bug fixes
+      /^(docs?)[(:]/, // Documentation
+      /^(style|format)[(:]/, // Style changes
+      /^(refactor)[(:]/, // Refactoring
+      /^(test)[(:]/, // Tests
+      /^(chore)[(:]/, // Chores
+      /^(build|ci)[(:]/, // Build/CI
+      /^(perf|performance)[(:]/, // Performance
+      /^(revert)[(:]/, // Reverts
       /bump.*version/, // Version bumps
       /update.*dependencies?/, // Dependency updates
       /merge.*pull.*request/, // Merge commits
