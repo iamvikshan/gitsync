@@ -1,38 +1,24 @@
 {
   "name": "Ubuntu + Bun",
   "image": "vikshan/ubuntu-bun:latest",
-  // Configure tool-specific properties.
   "customizations": {
     "vscode": {
       "extensions": [
         "dbaeumer.vscode-eslint",
-        "GitHub.copilot",
         "esbenp.prettier-vscode",
-        "eamodio.gitlens",
         "oven.bun-vscode",
         "christian-kohler.npm-intellisense",
         "WakaTime.vscode-wakatime",
         "coderabbit.coderabbit-vscode",
-        "DeepScan.vscode-deepscan",
-        "usernamehw.errorlens",
-        "jetbrains.qodana-code"
+        "DeepScan.vscode-deepscan"
       ]
     }
   },
-
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {
-      "installDirectlyFromGitHubRelease": true,
-      "version": "latest"
-    },
     "ghcr.io/devcontainers/features/sshd:1": {
       "version": "latest"
     }
   },
-
-  // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "[ -f scripts/git.sh ] && chmod +x scripts/git.sh; bun install && sudo ln -sf /usr/share/zoneinfo/Africa/Nairobi /etc/localtime && curl -fsSL https://cli.coderabbit.ai/install.sh | sh",
-
-  // Set `remoteUser` to `root` to connect as root.
-  "remoteUser": "root"
+  "remoteUser": "root",
+  "postCreateCommand": "apt update && apt upgrade -y && bun upgrade && ln -sf /usr/share/zoneinfo/Africa/Nairobi /etc/localtime && curl -fsSL https://cli.coderabbit.ai/install.sh | sh && mkdir -p scripts && curl -sL https://raw.githubusercontent.com/iamvikshan/atlas/main/scripts/bootstrap.sh > scripts/bootstrap.sh && chmod +x scripts/bootstrap.sh && scripts/bootstrap.sh --default"
 }

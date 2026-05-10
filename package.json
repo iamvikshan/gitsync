@@ -10,10 +10,13 @@
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint src/**/*.ts",
-    "f": "prettier --write \"**/*.*\"",
     "start": "bun src/index.ts",
-    "check": "tsc --noEmit",
     "build": "ncc build src/index.ts -o dist",
+    "f": "(git diff --name-only --diff-filter=ACMR HEAD && git ls-files --others --exclude-standard) | xargs bunx prettier --write --ignore-unknown",
+    "f:all": "prettier --write .",
+    "f:check": "prettier --check .",
+    "lint:fix": "eslint . --fix",
+    "check": "eslint . && tsc --noEmit",
     "prepare": "test -d .git && husky || true"
   },
   "keywords": [
@@ -34,13 +37,13 @@
   },
   "homepage": "https://github.com/iamvikshan/gitsync#readme",
   "dependencies": {
-    "@actions/core": "^3.0.0",
-    "@actions/github": "^9.0.0",
+    "@actions/core": "^3.0.1",
+    "@actions/github": "^9.1.1",
     "@gitbeaker/rest": "^43.8.0",
     "@octokit/rest": "^22.0.1",
     "deepmerge": "^4.3.1",
     "js-yaml": "^4.1.1",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -48,24 +51,24 @@
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/github": "^12.0.8",
     "@semantic-release/npm": "^13.1.5",
-    "@semantic-release/release-notes-generator": "^14.1.0",
+    "@semantic-release/release-notes-generator": "^14.1.1",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^25.5.0",
-    "@typescript-eslint/eslint-plugin": "^8.57.0",
-    "@typescript-eslint/parser": "^8.57.0",
+    "@types/node": "^25.6.2",
+    "@typescript-eslint/eslint-plugin": "^8.59.2",
+    "@typescript-eslint/parser": "^8.59.2",
     "@vercel/ncc": "^0.38.4",
-    "axios": "^1.13.6",
-    "conventional-changelog-conventionalcommits": "^9.3.0",
+    "axios": "^1.16.0",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "conventional-changelog-gitmoji": "^0.2.5",
-    "eslint": "^10.0.3",
-    "globals": "^17.4.0",
+    "eslint": "^10.3.0",
+    "globals": "^17.6.0",
     "husky": "^9.1.7",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.3",
     "semantic-release": "^25.0.3",
     "semantic-release-gitmoji": "^1.6.9",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.0"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.2"
   }
 }
