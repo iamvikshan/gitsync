@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 
 
+# [v1.1.0](https://github.com/iamvikshan/gitsync/compare/v1.0.1...v1.1.0) (2026-05-10)
+
+
+
+## [1.1.0](https://github.com/iamvikshan/gitsync/compare/v1.0.1...v1.1.0) (2026-05-10)
+
+### Features
+
+* update package.json with new scripts and dependency versions ([10817a8](https://github.com/iamvikshan/gitsync/commit/10817a80c677509f0d0df655b5ba1fd5ff8215db))
+
 # [v1.0.1](https://github.com/iamvikshan/gitsync/compare/v1.0.0...v1.0.1) (2026-03-13)
 
 
