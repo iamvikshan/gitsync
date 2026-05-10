@@ -754,8 +754,7 @@ To contribute a new provider plugin:
 - **Example Plugin**:
   [git-sync-plugin-codeberg](https://github.com/iamvikshan/git-sync-plugin-codeberg)
 - **Type Definitions**: Available in `@iamvikshan/git-sync` package
-- **Community Plugins**:
-  [Plugin Registry](https://github.com/iamvikshan/gitsync/wiki/Plugins)
+- **Community Plugins**: [Plugin Registry](https://github.com/iamvikshan/gitsync/wiki/Plugins)
 
 ## 🔮 Future Enhancements
 

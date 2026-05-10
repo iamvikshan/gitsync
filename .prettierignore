@@ -1,9 +1,4 @@
-node_modules/
-dist/
-*ignore*
-*.sh
-*lock*
-*.nix
-.env*
+node_modules
 *.env
-.tmp-git*
+scripts/
+CHANGELOG.md

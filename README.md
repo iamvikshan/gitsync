@@ -118,21 +118,21 @@ For detailed configuration and advanced usage:
 ## 🤝 Need Help?
 
 - 📋 [Configuration Examples](docs/sync-config-example.yml) - Ready-to-use configuration templates
-- 🐛 [Report Issues](https://github.com/iamvikshan/gitsync/issues) - Found a bug or
-  have a feature request?
-- 💬 [Discussions](https://github.com/iamvikshan/gitsync/discussions) - Ask questions
-  and share ideas
+- 🐛 [Report Issues](https://github.com/iamvikshan/gitsync/issues) - Found a bug or have a feature
+  request?
+- 💬 [Discussions](https://github.com/iamvikshan/gitsync/discussions) - Ask questions and share
+  ideas
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our
-[Contributing Guide](https://github.com/iamvikshan/.github/blob/main/.github/CONTRIBUTING.md) for
-details.
+Contributions are welcome! You MUST read the
+[`CONTRIBUTING.md`](https://github.com/iamvikshan/.github/blob/main/.github/CONTRIBUTING.md) for
+guidelines on how to contribute to this project.
 
 ## 📄 License
 
-MIT License - see the
-[LICENSE](https://github.com/iamvikshan/.github/blob/main/.github/LICENSE.md) file for details.
+MIT License - see the [LICENSE](https://github.com/iamvikshan/.github/blob/main/.github/LICENSE.md)
+file for details.
 
 ---
 
