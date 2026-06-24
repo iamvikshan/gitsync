@@ -6,16 +6,22 @@ module.exports = {
       {
         releaseRules: {
           patch: {
-            include: [':bug:', ':ambulance:', ':lock:', ':adhesive_bandage:']
+            include: [':bug:', ':ambulance:', ':lock:', ':adhesive_bandage:'],
           },
           minor: {
-            include: [':sparkles:', ':rocket:', ':boom:', ':lipstick:', ':zap:']
+            include: [
+              ':sparkles:',
+              ':rocket:',
+              ':boom:',
+              ':lipstick:',
+              ':zap:',
+            ],
           },
           major: {
-            include: [':boom:', ':warning:']
-          }
-        }
-      }
+            include: [':boom:', ':warning:'],
+          },
+        },
+      },
     ],
 
     '@semantic-release/commit-analyzer',
@@ -36,18 +42,18 @@ module.exports = {
             { type: 'refactor', section: '♻️ Code Refactoring' },
             { type: 'test', section: '✓ Tests' },
             { type: 'build', section: '👷 Build System' },
-            { type: 'ci', section: '🔄 CI/CD' }
-          ]
-        }
-      }
+            { type: 'ci', section: '🔄 CI/CD' },
+          ],
+        },
+      },
     ],
 
     [
       '@semantic-release/changelog',
       {
         changelogTitle:
-          '# 📦 Changelog\n\nAll notable changes to this project will be documented in this file.\n'
-      }
+          '# 📦 Changelog\n\nAll notable changes to this project will be documented in this file.\n',
+      },
     ],
 
     [
@@ -58,8 +64,8 @@ module.exports = {
         failTitle: '❌ The release failed',
         failComment:
           'The release from branch ${branch.name} failed to publish.',
-        labels: ['released']
-      }
+        labels: ['released'],
+      },
     ],
 
     [
@@ -77,9 +83,9 @@ module.exports = {
           // Update action version references in documentation
           "sed -i 's|\\*\\*Action Version:\\*\\* v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+|**Action Version:** v${nextRelease.version}|g' docs/TROUBLESHOOTING.md",
           // Update package.json version
-          'npm version ${nextRelease.version} --no-git-tag-version'
-        ].join(' && ')
-      }
+          'npm version ${nextRelease.version} --no-git-tag-version',
+        ].join(' && '),
+      },
     ],
 
     [
@@ -93,11 +99,11 @@ module.exports = {
           'docs/EXAMPLES.md',
           'docs/CONFIGURATION.md',
           'docs/README.md',
-          'docs/SDK.md'
+          'docs/SDK.md',
         ],
         message:
-          'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}'
-      }
-    ]
-  ]
+          'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
+      },
+    ],
+  ],
 }
