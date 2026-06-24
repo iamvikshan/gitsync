@@ -74,7 +74,7 @@
       "matchPackageNames": [
         "/^oxlint/",
         "/^oxfmt/",
-        "/^tsgolint/",
+        "/oxlint-tsgolint/",
         "/types/",
         "/^@typescript-eslint\\//",
         "/^typescript-eslint/"
