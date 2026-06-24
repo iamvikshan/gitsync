@@ -19,7 +19,7 @@ export async function validateConfig(config: Config): Promise<Config> {
 
       // Log warnings with color and specific codes
       warnings.forEach(warning =>
-        logWarning('EAUTH1', warning, { platform: 'GitHub' })
+        logWarning('EAUTH1', warning, { platform: 'GitHub' }),
       )
 
       if (config.gitlab.enabled && !token) {
@@ -27,8 +27,8 @@ export async function validateConfig(config: Config): Promise<Config> {
           new ValidationError(
             'EAUTH3',
             'GitHub token is required when syncing between GitLab and GitHub',
-            { platform: 'GitHub', syncTarget: 'GitLab' }
-          )
+            { platform: 'GitHub', syncTarget: 'GitLab' },
+          ),
         )
       }
 
@@ -42,7 +42,7 @@ export async function validateConfig(config: Config): Promise<Config> {
           logWarning(
             'ECFG01',
             'GitHub releases are enabled but tags are disabled. Automatically enabling tag syncing to prevent orphaning releases.',
-            { platform: 'GitHub' }
+            { platform: 'GitHub' },
           )
           updatedConfig.github.sync.tags.enabled = true
         }
@@ -56,7 +56,7 @@ export async function validateConfig(config: Config): Promise<Config> {
           logWarning(
             'ECFG02',
             'GitHub tags/releases are enabled but branch historySync is disabled. Automatically enabling historySync to ensure proper timeline synchronization.',
-            { platform: 'GitHub' }
+            { platform: 'GitHub' },
           )
           if (updatedConfig.github.sync.branches.historySync) {
             updatedConfig.github.sync.branches.historySync.enabled = true
@@ -72,7 +72,7 @@ export async function validateConfig(config: Config): Promise<Config> {
           logWarning(
             'ECFG01',
             "GitHub pull requests/issues are enabled but branches are disabled. Automatically enabling branch syncing as it's required for PR/issue synchronization.",
-            { platform: 'GitHub' }
+            { platform: 'GitHub' },
           )
           updatedConfig.github.sync.branches.enabled = true
         }
@@ -81,7 +81,7 @@ export async function validateConfig(config: Config): Promise<Config> {
       updatedConfig.github = {
         ...updatedConfig.github,
         ...(token && { token }),
-        ...getGitHubRepo(config)
+        ...getGitHubRepo(config),
       }
     }
 
@@ -93,15 +93,17 @@ export async function validateConfig(config: Config): Promise<Config> {
       const needsGitLabToken =
         config.github.enabled &&
         config.gitlab.sync &&
-        Object.values(config.gitlab.sync).some((entity: any) => entity?.enabled)
+        Object.values(config.gitlab.sync).some(
+          (entity: unknown) => entity?.enabled,
+        )
 
       if (needsGitLabToken && !token) {
         errors.push(
           new ValidationError(
             'EAUTH3',
             'GitLab token is required when syncing FROM GitLab to GitHub',
-            { platform: 'GitLab', syncTarget: 'GitHub' }
-          )
+            { platform: 'GitLab', syncTarget: 'GitHub' },
+          ),
         )
       }
 
@@ -115,7 +117,7 @@ export async function validateConfig(config: Config): Promise<Config> {
           logWarning(
             'ECFG01',
             'GitLab releases are enabled but tags are disabled. Automatically enabling tag syncing to prevent orphaning releases.',
-            { platform: 'GitLab' }
+            { platform: 'GitLab' },
           )
           updatedConfig.gitlab.sync.tags.enabled = true
         }
@@ -129,7 +131,7 @@ export async function validateConfig(config: Config): Promise<Config> {
           logWarning(
             'ECFG02',
             'GitLab tags/releases are enabled but branch historySync is disabled. Automatically enabling historySync to ensure proper timeline synchronization.',
-            { platform: 'GitLab' }
+            { platform: 'GitLab' },
           )
           if (updatedConfig.gitlab.sync.branches?.historySync) {
             updatedConfig.gitlab.sync.branches.historySync.enabled = true
@@ -145,7 +147,7 @@ export async function validateConfig(config: Config): Promise<Config> {
           logWarning(
             'ECFG01',
             "GitLab pull requests/issues are enabled but branches are disabled. Automatically enabling branch syncing as it's required for PR/issue synchronization.",
-            { platform: 'GitLab' }
+            { platform: 'GitLab' },
           )
           if (updatedConfig.gitlab.sync.branches) {
             updatedConfig.gitlab.sync.branches.enabled = true
@@ -156,7 +158,7 @@ export async function validateConfig(config: Config): Promise<Config> {
       updatedConfig.gitlab = {
         ...updatedConfig.gitlab,
         ...(token && { token }),
-        ...getGitLabRepo(config)
+        ...getGitLabRepo(config),
       }
     }
 
@@ -169,8 +171,8 @@ export async function validateConfig(config: Config): Promise<Config> {
         'Multiple validation errors occurred',
         {
           errorCount: errors.length,
-          errors: errors.map(e => e.message)
-        }
+          errors: errors.map(e => e.message),
+        },
       )
     }
 
@@ -185,8 +187,8 @@ export async function validateConfig(config: Config): Promise<Config> {
       'ECFG01',
       'Unexpected configuration validation error',
       {
-        originalError: error instanceof Error ? error.message : String(error)
-      }
+        originalError: error instanceof Error ? error.message : String(error),
+      },
     )
   } finally {
     core.endGroup()

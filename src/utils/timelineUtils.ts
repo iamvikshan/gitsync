@@ -38,7 +38,7 @@ export class TimelineManager {
   constructor() {
     this.tmpDir = path.join(
       process.cwd(),
-      `.tmp-timeline-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
+      `.tmp-timeline-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
     )
   }
 
@@ -48,7 +48,7 @@ export class TimelineManager {
   async findMergeBase(
     sourceClient: GitHubClient | GitLabClient,
     targetClient: GitHubClient | GitLabClient,
-    branchName = 'main'
+    branchName = 'main',
   ): Promise<string | null> {
     try {
       await this.setupTempRepo()
@@ -59,10 +59,10 @@ export class TimelineManager {
 
       // Fetch both branches
       await exec.exec('git', ['fetch', 'source', branchName], {
-        cwd: this.tmpDir
+        cwd: this.tmpDir,
       })
       await exec.exec('git', ['fetch', 'target', branchName], {
-        cwd: this.tmpDir
+        cwd: this.tmpDir,
       })
 
       // Find merge base
@@ -75,10 +75,10 @@ export class TimelineManager {
           listeners: {
             stdout: (data: Buffer) => {
               mergeBase += data.toString().trim()
-            }
+            },
           },
-          ignoreReturnCode: true
-        }
+          ignoreReturnCode: true,
+        },
       )
 
       return exitCode === 0 ? mergeBase : null
@@ -94,19 +94,19 @@ export class TimelineManager {
   async analyzeTimelineDivergence(
     sourceClient: GitHubClient | GitLabClient,
     targetClient: GitHubClient | GitLabClient,
-    branchName = 'main'
+    branchName = 'main',
   ): Promise<TimelineDivergence> {
     const mergeBase = await this.findMergeBase(
       sourceClient,
       targetClient,
-      branchName
+      branchName,
     )
 
     if (!mergeBase) {
       return {
         hasCommonHistory: false,
         sourceUniqueCommits: [],
-        targetUniqueCommits: []
+        targetUniqueCommits: [],
       }
     }
 
@@ -114,13 +114,13 @@ export class TimelineManager {
       // Get commits unique to source
       const sourceUniqueCommits = await this.getUniqueCommits(
         `source/${branchName}`,
-        `target/${branchName}`
+        `target/${branchName}`,
       )
 
       // Get commits unique to target
       const targetUniqueCommits = await this.getUniqueCommits(
         `target/${branchName}`,
-        `source/${branchName}`
+        `source/${branchName}`,
       )
 
       return {
@@ -128,14 +128,14 @@ export class TimelineManager {
         mergeBase,
         divergencePoint: mergeBase,
         sourceUniqueCommits,
-        targetUniqueCommits
+        targetUniqueCommits,
       }
     } catch (error) {
       core.warning(`Failed to analyze timeline divergence: ${error}`)
       return {
         hasCommonHistory: false,
         sourceUniqueCommits: [],
-        targetUniqueCommits: []
+        targetUniqueCommits: [],
       }
     }
   }
@@ -145,7 +145,7 @@ export class TimelineManager {
    */
   async commitExists(
     client: GitHubClient | GitLabClient,
-    commitSha: string
+    commitSha: string,
   ): Promise<boolean> {
     return await client.commitExists(commitSha)
   }
@@ -155,7 +155,7 @@ export class TimelineManager {
    */
   async getCommitInfo(
     client: GitHubClient | GitLabClient,
-    commitSha: string
+    commitSha: string,
   ): Promise<CommitInfo | null> {
     const exists = await this.commitExists(client, commitSha)
     if (!exists) {
@@ -168,7 +168,7 @@ export class TimelineManager {
       message: 'Commit exists',
       author: 'Unknown',
       date: new Date().toISOString(),
-      exists: true
+      exists: true,
     }
   }
 
@@ -179,7 +179,7 @@ export class TimelineManager {
     sourceClient: GitHubClient | GitLabClient,
     targetClient: GitHubClient | GitLabClient,
     branchName: string,
-    mergeMessage: string
+    mergeMessage: string,
   ): Promise<TimelineMergeResult> {
     try {
       await this.setupTempRepo()
@@ -190,17 +190,17 @@ export class TimelineManager {
 
       // Fetch branches
       await exec.exec('git', ['fetch', 'source', branchName], {
-        cwd: this.tmpDir
+        cwd: this.tmpDir,
       })
       await exec.exec('git', ['fetch', 'target', branchName], {
-        cwd: this.tmpDir
+        cwd: this.tmpDir,
       })
 
       // Checkout target branch
       await exec.exec(
         'git',
         ['checkout', '-b', branchName, `target/${branchName}`],
-        { cwd: this.tmpDir }
+        { cwd: this.tmpDir },
       )
 
       // Attempt merge
@@ -209,8 +209,8 @@ export class TimelineManager {
         ['merge', `source/${branchName}`, '-m', mergeMessage],
         {
           cwd: this.tmpDir,
-          ignoreReturnCode: true
-        }
+          ignoreReturnCode: true,
+        },
       )
 
       if (mergeExitCode === 0) {
@@ -221,30 +221,30 @@ export class TimelineManager {
           listeners: {
             stdout: (data: Buffer) => {
               mergeCommitSha = data.toString().trim()
-            }
-          }
+            },
+          },
         })
 
         return {
           success: true,
           mergeCommitSha,
-          conflictsResolved: false
+          conflictsResolved: false,
         }
       } else {
         // Handle merge conflicts with a simple strategy
         core.info(
-          '🔀 Merge conflicts detected, attempting automatic resolution...'
+          '🔀 Merge conflicts detected, attempting automatic resolution...',
         )
 
         // Accept both changes for most conflicts
         await exec.exec('git', ['checkout', '--theirs', '.'], {
           cwd: this.tmpDir,
-          ignoreReturnCode: true
+          ignoreReturnCode: true,
         })
 
         await exec.exec('git', ['add', '.'], { cwd: this.tmpDir })
         await exec.exec('git', ['commit', '-m', mergeMessage], {
-          cwd: this.tmpDir
+          cwd: this.tmpDir,
         })
 
         let mergeCommitSha = ''
@@ -253,21 +253,21 @@ export class TimelineManager {
           listeners: {
             stdout: (data: Buffer) => {
               mergeCommitSha = data.toString().trim()
-            }
-          }
+            },
+          },
         })
 
         return {
           success: true,
           mergeCommitSha,
-          conflictsResolved: true
+          conflictsResolved: true,
         }
       }
     } catch (error) {
       return {
         success: false,
         conflictsResolved: false,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       }
     }
   }
@@ -279,18 +279,18 @@ export class TimelineManager {
   async findEquivalentCommit(
     sourceCommit: CommitInfo,
     targetClient: GitHubClient | GitLabClient,
-    branchName = 'main'
+    branchName = 'main',
   ): Promise<string | null> {
     try {
       core.info(
-        `🔍 Searching for equivalent commit: ${sourceCommit.message.substring(0, 50)}...`
+        `🔍 Searching for equivalent commit: ${sourceCommit.message.substring(0, 50)}...`,
       )
 
       // Get recent commits from target repository (last 100 commits)
       const targetCommits = await this.getRecentCommits(
         targetClient,
         branchName,
-        100
+        100,
       )
 
       if (targetCommits.length === 0) {
@@ -308,7 +308,7 @@ export class TimelineManager {
       // Strategy 2: Message similarity with author match
       const similarMatch = await this.findSimilarMatch(
         sourceCommit,
-        targetCommits
+        targetCommits,
       )
       if (similarMatch) {
         core.info(`✅ Found similar match: ${similarMatch}`)
@@ -319,7 +319,7 @@ export class TimelineManager {
       const treeMatch = await this.findTreeMatch(
         sourceCommit,
         targetCommits,
-        targetClient
+        targetClient,
       )
       if (treeMatch) {
         core.info(`✅ Found tree content match: ${treeMatch}`)
@@ -330,7 +330,7 @@ export class TimelineManager {
       const semanticMatch = await this.findSemanticMatch(
         sourceCommit,
         targetCommits,
-        targetClient
+        targetClient,
       )
       if (semanticMatch) {
         core.info(`✅ Found semantic match: ${semanticMatch}`)
@@ -350,12 +350,12 @@ export class TimelineManager {
    */
   private async findExactMatch(
     sourceCommit: CommitInfo,
-    targetCommits: CommitInfo[]
+    targetCommits: CommitInfo[],
   ): Promise<string | null> {
     const exactMatch = targetCommits.find(
       commit =>
         commit.message.trim() === sourceCommit.message.trim() &&
-        commit.author === sourceCommit.author
+        commit.author === sourceCommit.author,
     )
 
     return exactMatch ? exactMatch.sha : null
@@ -366,14 +366,14 @@ export class TimelineManager {
    */
   private async findSimilarMatch(
     sourceCommit: CommitInfo,
-    targetCommits: CommitInfo[]
+    targetCommits: CommitInfo[],
   ): Promise<string | null> {
     const sourceMsg = sourceCommit.message.trim().toLowerCase()
     const sourceAuthor = sourceCommit.author.toLowerCase()
 
     // Find commits by same author with similar messages
     const authorMatches = targetCommits.filter(
-      commit => commit.author.toLowerCase() === sourceAuthor
+      commit => commit.author.toLowerCase() === sourceAuthor,
     )
 
     if (authorMatches.length === 0) return null
@@ -383,14 +383,14 @@ export class TimelineManager {
       commit,
       score: this.calculateMessageSimilarity(
         sourceMsg,
-        commit.message.trim().toLowerCase()
-      )
+        commit.message.trim().toLowerCase(),
+      ),
     }))
 
     // Find best match with similarity > 80%
     const bestMatch = similarities
       .filter(s => s.score > 0.8)
-      .sort((a, b) => b.score - a.score)[0]
+      .toSorted((a, b) => b.score - a.score)[0]
 
     return bestMatch ? bestMatch.commit.sha : null
   }
@@ -401,7 +401,7 @@ export class TimelineManager {
   private async findTreeMatch(
     sourceCommit: CommitInfo,
     targetCommits: CommitInfo[],
-    targetClient: GitHubClient | GitLabClient
+    targetClient: GitHubClient | GitLabClient,
   ): Promise<string | null> {
     try {
       // This is computationally expensive, so we limit to recent commits by same author
@@ -413,7 +413,7 @@ export class TimelineManager {
         const treesMatch = await this.compareCommitTrees(
           sourceCommit,
           targetCommit,
-          targetClient
+          targetClient,
         )
         if (treesMatch) {
           return targetCommit.sha
@@ -433,7 +433,7 @@ export class TimelineManager {
   private async findSemanticMatch(
     sourceCommit: CommitInfo,
     targetCommits: CommitInfo[],
-    targetClient: GitHubClient | GitLabClient
+    targetClient: GitHubClient | GitLabClient,
   ): Promise<string | null> {
     try {
       // Look for commits with similar semantic patterns
@@ -449,7 +449,7 @@ export class TimelineManager {
         const changesMatch = await this.compareCommitChanges(
           sourceCommit,
           candidate,
-          targetClient
+          targetClient,
         )
         if (changesMatch) {
           return candidate.sha
@@ -469,7 +469,7 @@ export class TimelineManager {
   private async getRecentCommits(
     client: GitHubClient | GitLabClient,
     branchName: string,
-    limit: number
+    limit: number,
   ): Promise<CommitInfo[]> {
     try {
       const commits = await client.getRecentCommits(branchName, limit)
@@ -480,7 +480,7 @@ export class TimelineManager {
           message: commit.commit.message,
           author: commit.commit.author?.name || 'Unknown',
           date: commit.commit.author?.date || new Date().toISOString(),
-          exists: true
+          exists: true,
         }))
       } else {
         return commits.map(commit => ({
@@ -488,7 +488,7 @@ export class TimelineManager {
           message: commit.message,
           author: commit.author_name,
           date: commit.created_at,
-          exists: true
+          exists: true,
         }))
       }
     } catch (error) {
@@ -531,7 +531,7 @@ export class TimelineManager {
   private async compareCommitTrees(
     sourceCommit: CommitInfo,
     targetCommit: CommitInfo,
-    _targetClient: GitHubClient | GitLabClient
+    _targetClient: GitHubClient | GitLabClient,
   ): Promise<boolean> {
     try {
       // This is a simplified implementation
@@ -540,7 +540,7 @@ export class TimelineManager {
       // For now, we'll use a heuristic based on commit message similarity and timing
       const messageSimilarity = this.calculateMessageSimilarity(
         sourceCommit.message,
-        targetCommit.message
+        targetCommit.message,
       )
 
       // Check if commits are close in time (within 7 days)
@@ -564,27 +564,27 @@ export class TimelineManager {
    */
   private haveSimilarSemanticPatterns(
     sourceCommit: CommitInfo,
-    targetCommit: CommitInfo
+    targetCommit: CommitInfo,
   ): boolean {
     const sourceMsg = sourceCommit.message.toLowerCase()
     const targetMsg = targetCommit.message.toLowerCase()
 
     // Common semantic patterns in commit messages
     const patterns = [
-      /^(feat|feature)[\(\:]/, // Feature commits
-      /^(fix|bugfix)[\(\:]/, // Bug fixes
-      /^(docs?)[\(\:]/, // Documentation
-      /^(style|format)[\(\:]/, // Style changes
-      /^(refactor)[\(\:]/, // Refactoring
-      /^(test)[\(\:]/, // Tests
-      /^(chore)[\(\:]/, // Chores
-      /^(build|ci)[\(\:]/, // Build/CI
-      /^(perf|performance)[\(\:]/, // Performance
-      /^(revert)[\(\:]/, // Reverts
+      /^(feat|feature)[(:]/, // Feature commits
+      /^(fix|bugfix)[(:]/, // Bug fixes
+      /^(docs?)[(:]/, // Documentation
+      /^(style|format)[(:]/, // Style changes
+      /^(refactor)[(:]/, // Refactoring
+      /^(test)[(:]/, // Tests
+      /^(chore)[(:]/, // Chores
+      /^(build|ci)[(:]/, // Build/CI
+      /^(perf|performance)[(:]/, // Performance
+      /^(revert)[(:]/, // Reverts
       /bump.*version/, // Version bumps
       /update.*dependencies?/, // Dependency updates
       /merge.*pull.*request/, // Merge commits
-      /initial.*commit/ // Initial commits
+      /initial.*commit/, // Initial commits
     ]
 
     // Check if both commits match the same semantic pattern
@@ -599,7 +599,7 @@ export class TimelineManager {
     const targetKeywords = this.extractKeywords(targetMsg)
 
     const commonKeywords = sourceKeywords.filter(k =>
-      targetKeywords.includes(k)
+      targetKeywords.includes(k),
     )
 
     // Consider similar if they share significant keywords
@@ -615,7 +615,7 @@ export class TimelineManager {
   private async compareCommitChanges(
     sourceCommit: CommitInfo,
     targetCommit: CommitInfo,
-    _targetClient: GitHubClient | GitLabClient
+    _targetClient: GitHubClient | GitLabClient,
   ): Promise<boolean> {
     try {
       // This would ideally compare the actual diff/patch content
@@ -624,7 +624,7 @@ export class TimelineManager {
       // 1. Message similarity
       const messageSimilarity = this.calculateMessageSimilarity(
         sourceCommit.message,
-        targetCommit.message
+        targetCommit.message,
       )
 
       // 2. Author match
@@ -703,7 +703,7 @@ export class TimelineManager {
       'may',
       'might',
       'must',
-      'can'
+      'can',
     ])
 
     return message
@@ -735,12 +735,12 @@ export class TimelineManager {
 
     await exec.exec('git', ['init'], { cwd: this.tmpDir })
     await exec.exec('git', ['config', 'user.name', 'gitsync'], {
-      cwd: this.tmpDir
+      cwd: this.tmpDir,
     })
     await exec.exec(
       'git',
       ['config', 'user.email', 'gitsync@users.noreply.github.com'],
-      { cwd: this.tmpDir }
+      { cwd: this.tmpDir },
     )
   }
 
@@ -761,7 +761,7 @@ export class TimelineManager {
 
   private async getUniqueCommits(
     baseBranch: string,
-    compareBranch: string
+    compareBranch: string,
   ): Promise<string[]> {
     const commits: string[] = []
 
@@ -779,10 +779,10 @@ export class TimelineManager {
                 commits.push(sha)
               }
             }
-          }
+          },
         },
-        ignoreReturnCode: true
-      }
+        ignoreReturnCode: true,
+      },
     )
 
     return commits

@@ -6,12 +6,12 @@ export class PermissionValidator {
   static async validatePlatformPermissions(
     platform: 'github' | 'gitlab',
     checks: PermissionCheck[],
-    sync: any,
-    repoInfo: string
+    sync: unknown,
+    repoInfo: string,
   ): Promise<void> {
     core.startGroup(`🔍 ${platform.toUpperCase()} Permissions Validation`)
     core.info(
-      `\x1b[36mValidating ${platform} permissions for: ${repoInfo}\x1b[0m`
+      `\x1b[36mValidating ${platform} permissions for: ${repoInfo}\x1b[0m`,
     )
 
     for (const check of checks) {

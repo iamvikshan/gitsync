@@ -24,7 +24,7 @@ export class CommentFormatter {
     comment: Comment,
     sourceClient: GitHubClient | GitLabClient,
     issueNumber: number,
-    options: CommentSyncOptions
+    options: CommentSyncOptions,
   ): string {
     const repoInfo = sourceClient.getRepoInfo()
     const platform = sourceClient instanceof GitHubClient ? 'GitHub' : 'GitLab'
@@ -39,7 +39,7 @@ export class CommentFormatter {
           repoInfo,
           platform,
           issueNumber,
-          options
+          options,
         )
         break
       case 'inline':
@@ -48,7 +48,7 @@ export class CommentFormatter {
           repoInfo,
           platform,
           issueNumber,
-          options
+          options,
         )
         break
       case 'minimal':
@@ -57,7 +57,7 @@ export class CommentFormatter {
           repoInfo,
           platform,
           issueNumber,
-          options
+          options,
         )
         break
     }
@@ -70,10 +70,10 @@ export class CommentFormatter {
    */
   private static formatQuotedComment(
     comment: Comment,
-    repoInfo: any,
+    repoInfo: unknown,
     platform: string,
     issueNumber: number,
-    options: CommentSyncOptions
+    options: CommentSyncOptions,
   ): string {
     let header = `**💬 Comment by @${comment.author || 'unknown'} on ${platform}**`
 
@@ -86,7 +86,7 @@ export class CommentFormatter {
       body = this.preserveMarkdownFormatting(body)
     }
 
-    let quotedBody = body
+    const quotedBody = body
       .split('\n')
       .map(line => `> ${line}`)
       .join('\n')
@@ -105,10 +105,10 @@ export class CommentFormatter {
    */
   private static formatInlineComment(
     comment: Comment,
-    repoInfo: any,
+    repoInfo: unknown,
     platform: string,
     issueNumber: number,
-    options: CommentSyncOptions
+    options: CommentSyncOptions,
   ): string {
     let prefix = `**@${comment.author || 'unknown'}** (${platform}): `
 
@@ -129,10 +129,10 @@ export class CommentFormatter {
    */
   private static formatMinimalComment(
     comment: Comment,
-    repoInfo: any,
+    repoInfo: unknown,
     platform: string,
     issueNumber: number,
-    options: CommentSyncOptions
+    options: CommentSyncOptions,
   ): string {
     let body = comment.body
     if (options.preserveFormatting) {
@@ -177,7 +177,7 @@ export class CommentFormatter {
   static async generateCommentSourceUrl(
     sourceClient: GitHubClient | GitLabClient,
     issueNumber: number,
-    commentId: number
+    commentId: number,
   ): Promise<string> {
     const repoInfo = await sourceClient.getRepoInfo()
 
@@ -216,7 +216,7 @@ export class CommentFormatter {
    */
   static needsCommentUpdate(
     sourceComment: Comment,
-    targetComment: Comment
+    targetComment: Comment,
   ): boolean {
     // Extract the original body from the synced comment
     const targetBody = this.extractOriginalBody(targetComment.body)
@@ -258,7 +258,7 @@ export class CommentFormatter {
  */
 export function getCommentSyncOptions(
   config: Config,
-  type: 'issues' | 'pullRequests'
+  type: 'issues' | 'pullRequests',
 ): CommentSyncOptions {
   const syncConfig =
     type === 'issues'
@@ -273,10 +273,10 @@ export function getCommentSyncOptions(
         syncConfig?.comments?.attribution?.includeTimestamp ?? true,
       includeSourceLink:
         syncConfig?.comments?.attribution?.includeSourceLink ?? true,
-      format: syncConfig?.comments?.attribution?.format || 'quoted'
+      format: syncConfig?.comments?.attribution?.format || 'quoted',
     },
     handleUpdates: syncConfig?.comments?.handleUpdates ?? true,
     preserveFormatting: syncConfig?.comments?.preserveFormatting ?? true,
-    syncReplies: syncConfig?.comments?.syncReplies ?? true
+    syncReplies: syncConfig?.comments?.syncReplies ?? true,
   }
 }

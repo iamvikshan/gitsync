@@ -7,7 +7,7 @@ import { getCommentSyncOptions, CommentFormatter } from '../utils/commentUtils'
 
 function logSyncPlan(sourcePRs: PullRequest[], targetPRs: PullRequest[]): void {
   const toCreate = sourcePRs.filter(
-    sourcePR => !targetPRs.find(pr => pr.title === sourcePR.title)
+    sourcePR => !targetPRs.find(pr => pr.title === sourcePR.title),
   ).length
   const toUpdate = sourcePRs.filter(sourcePR => {
     const targetPR = targetPRs.find(pr => pr.title === sourcePR.title)
@@ -36,7 +36,7 @@ function logSyncPlan(sourcePRs: PullRequest[], targetPRs: PullRequest[]): void {
 
 export async function syncPullRequests(
   source: GitHubClient | GitLabClient,
-  target: GitHubClient | GitLabClient
+  target: GitHubClient | GitLabClient,
 ) {
   try {
     const sourcePRs = await source.syncPullRequests()
@@ -76,7 +76,7 @@ export async function syncPullRequests(
         // Handle merged source PRs - just close the target PR if it's still open
         if (sourcePR.state === 'merged' && targetPR.state === 'open') {
           core.info(
-            `🔀 Closing target PR (source was merged): ${sourcePR.title} (open → closed)`
+            `🔀 Closing target PR (source was merged): ${sourcePR.title} (open → closed)`,
           )
           await target.closePullRequest(targetPR.number!)
         }
@@ -103,7 +103,7 @@ export async function syncPullRequests(
     return sourcePRs
   } catch (error) {
     core.error(
-      `Failed to sync pull requests: ${error instanceof Error ? error.message : String(error)}`
+      `Failed to sync pull requests: ${error instanceof Error ? error.message : String(error)}`,
     )
     return []
   }
@@ -137,7 +137,7 @@ function needsUpdate(sourcePR: PullRequest, targetPR: PullRequest): boolean {
  */
 function isValidStateTransition(
   sourceState: string,
-  targetState: string
+  targetState: string,
 ): boolean {
   // No change needed if states are the same
   if (sourceState === targetState) {
@@ -188,7 +188,7 @@ function getUpdateReason(sourcePR: PullRequest, targetPR: PullRequest): string {
 }
 
 function arraysEqual(a: string[], b: string[]): boolean {
-  return JSON.stringify(a.sort()) === JSON.stringify(b.sort())
+  return JSON.stringify(a.toSorted()) === JSON.stringify(b.toSorted())
 }
 
 /**
@@ -196,7 +196,7 @@ function arraysEqual(a: string[], b: string[]): boolean {
  */
 async function formatPRComments(
   source: GitHubClient | GitLabClient,
-  sourcePR: PullRequest
+  sourcePR: PullRequest,
 ): Promise<PullRequest> {
   if (!sourcePR.comments || sourcePR.comments.length === 0) {
     return sourcePR
@@ -204,7 +204,7 @@ async function formatPRComments(
 
   const commentSyncOptions = getCommentSyncOptions(
     source.config,
-    'pullRequests'
+    'pullRequests',
   )
 
   if (!commentSyncOptions.enabled) {
@@ -216,17 +216,17 @@ async function formatPRComments(
       comment,
       source,
       sourcePR.number!,
-      commentSyncOptions
+      commentSyncOptions,
     )
 
     return {
       ...comment,
-      body: formattedBody
+      body: formattedBody,
     }
   })
 
   return {
     ...sourcePR,
-    comments: formattedComments
+    comments: formattedComments,
   }
 }

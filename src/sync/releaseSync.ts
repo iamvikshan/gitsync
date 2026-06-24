@@ -67,7 +67,7 @@ function logEnhancedSyncPlan(plan: ReleaseSyncPlan): void {
 
     // Special handling notifications
     const latestReleaseActions = [...plan.toCreate, ...plan.toUpdate].filter(
-      a => a.isLatest
+      a => a.isLatest,
     )
     if (latestReleaseActions.length > 0) {
       core.info('🎯 Latest release special handling:')
@@ -88,29 +88,29 @@ async function analyzeReleases(
   targetReleases: Release[],
   source: GitHubClient | GitLabClient,
   target: GitHubClient | GitLabClient,
-  config: ReleaseConfig
+  config: ReleaseConfig,
 ): Promise<ReleaseSyncPlan> {
   const timelineManager = new TimelineManager()
   const analyses: ReleaseAnalysis[] = []
 
   try {
     // Sort releases by creation date (newest first) to identify latest
-    const sortedReleases = [...sourceReleases].sort(
+    const sortedReleases = [...sourceReleases].toSorted(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     )
 
     for (let i = 0; i < sortedReleases.length; i++) {
       const sourceRelease = sortedReleases[i]
       const isLatest = i === 0 // First in sorted array is latest
       const targetRelease = targetReleases.find(
-        r => r.tag === sourceRelease.tag
+        r => r.tag === sourceRelease.tag,
       )
 
       // Check if commit exists in target repository
       const commitExists = await timelineManager.commitExists(
         target,
-        sourceRelease.commitSha || ''
+        sourceRelease.commitSha || '',
       )
 
       // If commit doesn't exist, try to find an equivalent commit
@@ -118,17 +118,17 @@ async function analyzeReleases(
       if (!commitExists && sourceRelease.commitSha) {
         const sourceCommitInfo = await timelineManager.getCommitInfo(
           source,
-          sourceRelease.commitSha
+          sourceRelease.commitSha,
         )
         if (sourceCommitInfo) {
           equivalentCommitSha = await timelineManager.findEquivalentCommit(
             sourceCommitInfo,
             target,
-            'main'
+            'main',
           )
           if (equivalentCommitSha) {
             core.info(
-              `🔍 Found equivalent commit for release ${sourceRelease.tag}: ${equivalentCommitSha}`
+              `🔍 Found equivalent commit for release ${sourceRelease.tag}: ${equivalentCommitSha}`,
             )
           }
         }
@@ -147,7 +147,7 @@ async function analyzeReleases(
               reason: 'Latest release - will point to latest commit',
               commitExists: false,
               isLatest: true,
-              strategy: 'point-to-latest'
+              strategy: 'point-to-latest',
             }
           } else if (config.divergentCommitStrategy === 'create-anyway') {
             analysis = {
@@ -156,7 +156,7 @@ async function analyzeReleases(
               reason: 'Creating anyway (divergent commit strategy)',
               commitExists: false,
               isLatest,
-              strategy: 'normal'
+              strategy: 'normal',
             }
           } else {
             analysis = {
@@ -165,7 +165,7 @@ async function analyzeReleases(
               reason: 'Commit does not exist in target repository',
               commitExists: false,
               isLatest,
-              strategy: 'skip-diverged'
+              strategy: 'skip-diverged',
             }
           }
         } else {
@@ -182,7 +182,7 @@ async function analyzeReleases(
             reason,
             commitExists: true,
             isLatest,
-            strategy: 'normal'
+            strategy: 'normal',
           }
         }
       } else {
@@ -203,7 +203,7 @@ async function analyzeReleases(
               reason: 'Latest release - will point to latest commit',
               commitExists: false,
               isLatest: true,
-              strategy: 'point-to-latest'
+              strategy: 'point-to-latest',
             }
           } else if (
             commitExists ||
@@ -222,7 +222,7 @@ async function analyzeReleases(
               reason,
               commitExists: commitExists || !!equivalentCommitSha,
               isLatest,
-              strategy: 'normal'
+              strategy: 'normal',
             }
           } else {
             analysis = {
@@ -231,7 +231,7 @@ async function analyzeReleases(
               reason: 'Commit does not exist in target repository',
               commitExists: false,
               isLatest,
-              strategy: 'skip-diverged'
+              strategy: 'skip-diverged',
             }
           }
         } else {
@@ -241,7 +241,7 @@ async function analyzeReleases(
             reason: 'Target release is newer or same',
             commitExists,
             isLatest,
-            strategy: 'normal'
+            strategy: 'normal',
           }
         }
       }
@@ -253,7 +253,7 @@ async function analyzeReleases(
       toCreate: analyses.filter(a => a.action === 'create'),
       toUpdate: analyses.filter(a => a.action === 'update'),
       toSkip: analyses.filter(a => a.action === 'skip'),
-      total: analyses.length
+      total: analyses.length,
     }
   } finally {
     await timelineManager.cleanup()
@@ -262,7 +262,7 @@ async function analyzeReleases(
 
 export async function syncReleases(
   source: GitHubClient | GitLabClient,
-  target: GitHubClient | GitLabClient
+  target: GitHubClient | GitLabClient,
 ) {
   try {
     const sourceReleases = await source.syncReleases()
@@ -284,7 +284,7 @@ export async function syncReleases(
       targetReleases,
       source,
       target,
-      releaseConfig
+      releaseConfig,
     )
 
     logEnhancedSyncPlan(syncPlan)
@@ -306,7 +306,7 @@ export async function syncReleases(
         batch.map(async analysis => {
           try {
             const release = analysis.release
-            let releaseToSync = { ...release }
+            const releaseToSync = { ...release }
 
             // Handle special strategies
             if (analysis.strategy === 'point-to-latest') {
@@ -317,7 +317,7 @@ export async function syncReleases(
               if (mainBranch) {
                 releaseToSync.commitSha = mainBranch.sha
                 core.info(
-                  `🎯 Pointing release ${release.tag} to latest commit: ${mainBranch.sha}`
+                  `🎯 Pointing release ${release.tag} to latest commit: ${mainBranch.sha}`,
                 )
               }
             }
@@ -338,35 +338,35 @@ export async function syncReleases(
             const errorMessage =
               error instanceof Error ? error.message : String(error)
             core.warning(
-              `Failed to sync release ${analysis.release.tag}: ${errorMessage}`
+              `Failed to sync release ${analysis.release.tag}: ${errorMessage}`,
             )
             return {
               tag: analysis.release.tag,
               status: 'failed',
-              error: errorMessage
+              error: errorMessage,
             }
           }
-        })
+        }),
       )
 
       // Log batch results
       const successful = batchResults.filter(
-        r => r.status === 'fulfilled' && r.value.status === 'success'
+        r => r.status === 'fulfilled' && r.value.status === 'success',
       )
       const failed = batchResults.filter(
         r =>
           r.status === 'rejected' ||
-          (r.status === 'fulfilled' && r.value.status === 'failed')
+          (r.status === 'fulfilled' && r.value.status === 'failed'),
       )
 
       if (successful.length > 0) {
         core.info(
-          `✓ Batch completed: ${successful.length} releases synced successfully`
+          `✓ Batch completed: ${successful.length} releases synced successfully`,
         )
       }
       if (failed.length > 0) {
         core.warning(
-          `⚠️ Batch issues: ${failed.length} releases failed to sync`
+          `⚠️ Batch issues: ${failed.length} releases failed to sync`,
         )
       }
     }
@@ -374,7 +374,7 @@ export async function syncReleases(
     return releasesToSync
   } catch (error) {
     core.error(
-      `Failed to sync releases: ${error instanceof Error ? error.message : String(error)}`
+      `Failed to sync releases: ${error instanceof Error ? error.message : String(error)}`,
     )
     return []
   }
@@ -383,13 +383,13 @@ export async function syncReleases(
 async function syncReleaseAssets(
   source: GitHubClient | GitLabClient,
   target: GitHubClient | GitLabClient,
-  release: Release
+  release: Release,
 ): Promise<void> {
   try {
     if (release.assets.length === 0) return
 
     core.info(
-      `📦 Syncing ${release.assets.length} assets for release ${release.tag}`
+      `📦 Syncing ${release.assets.length} assets for release ${release.tag}`,
     )
 
     // Process assets in parallel with controlled concurrency
@@ -405,11 +405,11 @@ async function syncReleaseAssets(
         batch.map(async asset => {
           try {
             core.info(
-              `⬇️ Downloading asset: ${asset.name} (${formatFileSize(asset.size || 0)})`
+              `⬇️ Downloading asset: ${asset.name} (${formatFileSize(asset.size || 0)})`,
             )
             const assetContent = await source.downloadReleaseAsset(
               release.id,
-              asset
+              asset,
             )
 
             core.info(`⬆️ Uploading asset: ${asset.name}`)
@@ -417,7 +417,7 @@ async function syncReleaseAssets(
 
             processedCount++
             core.info(
-              `✓ Synced asset ${asset.name} (${processedCount}/${release.assets.length})`
+              `✓ Synced asset ${asset.name} (${processedCount}/${release.assets.length})`,
             )
             return { name: asset.name, status: 'success' }
           } catch (error) {
@@ -426,22 +426,22 @@ async function syncReleaseAssets(
             core.warning(`Failed to sync asset ${asset.name}: ${errorMessage}`)
             return { name: asset.name, status: 'failed', error: errorMessage }
           }
-        })
+        }),
       )
 
       // Log batch progress
       const successful = batchResults.filter(
-        r => r.status === 'fulfilled' && r.value.status === 'success'
+        r => r.status === 'fulfilled' && r.value.status === 'success',
       )
       const failed = batchResults.filter(
         r =>
           r.status === 'rejected' ||
-          (r.status === 'fulfilled' && r.value.status === 'failed')
+          (r.status === 'fulfilled' && r.value.status === 'failed'),
       )
 
       if (successful.length > 0) {
         core.info(
-          `✅ ${successful.length} assets synced successfully in this batch`
+          `✅ ${successful.length} assets synced successfully in this batch`,
         )
       }
       if (failed.length > 0) {
@@ -452,7 +452,7 @@ async function syncReleaseAssets(
     core.info(`📦 Completed syncing assets for release ${release.tag}`)
   } catch (error) {
     core.warning(
-      `Failed to sync assets for release ${release.tag}: ${error instanceof Error ? error.message : String(error)}`
+      `Failed to sync assets for release ${release.tag}: ${error instanceof Error ? error.message : String(error)}`,
     )
   }
 }

@@ -18,7 +18,7 @@ export class ValidationError extends Error {
   constructor(
     code: keyof typeof ErrorCodes,
     message?: string,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ) {
     const fullMessage = `[${code}] ${ErrorCodes[code]}${message ? `: ${message}` : ''}`
     super(fullMessage)
@@ -52,7 +52,7 @@ export class ValidationError extends Error {
 export function logWarning(
   code: keyof typeof ErrorCodes,
   message?: string,
-  context?: Record<string, unknown>
+  context?: Record<string, unknown>,
 ) {
   const fullMessage = `[${code}] ${ErrorCodes[code]}${message ? `: ${message}` : ''}`
   core.warning(fullMessage)

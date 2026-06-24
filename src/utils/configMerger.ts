@@ -9,14 +9,14 @@ import deepmerge from 'deepmerge'
  */
 export function mergeWithDefaults(
   userConfig: Partial<Config>,
-  defaultConfig: Config
+  defaultConfig: Config,
 ): Config {
   // Custom merge array function to handle arrays in config
-  const mergeArray = (target: any[], source: any[]) => source
+  const mergeArray = (target: unknown[], source: unknown[]) => source
 
   return deepmerge(defaultConfig, userConfig, {
     arrayMerge: mergeArray,
     // Clone objects to avoid mutations
-    clone: true
+    clone: true,
   })
 }

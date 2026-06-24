@@ -25,7 +25,7 @@ export const botDefaults = [
   'wip-*', // Work in progress branches
   'draft-*', // Draft branches
   '^\\d+-*', // Issue number branches (123-fix-bug)
-  '^[a-zA-Z]+-\\d+' // Ticket branches (JIRA-123, etc.)
+  '^[a-zA-Z]+-\\d+', // Ticket branches (JIRA-123, etc.)
 ]
 
 /**
@@ -38,7 +38,7 @@ export const protectedBranches = [
   'development',
   'staging',
   'production',
-  'release'
+  'release',
 ]
 
 /**
@@ -69,18 +69,18 @@ export function getDefaultConfig(): Config {
             enabled: true, // Always enabled - required for proper timeline sync
             strategy: 'merge-timelines',
             createMergeCommits: true,
-            mergeMessage: 'Sync: Merge timeline from {source} to {target}'
+            mergeMessage: 'Sync: Merge timeline from {source} to {target}',
           },
           botBranches: {
             strategy: 'delete-orphaned', // Default: clean up orphaned bot branches
-            patterns: [] // Empty = use default patterns
-          }
+            patterns: [], // Empty = use default patterns
+          },
         },
         // HIGH: Core sync features - most users want these
         tags: {
           enabled: true,
           divergentCommitStrategy: 'skip',
-          pattern: '*'
+          pattern: '*',
         },
         releases: {
           enabled: true,
@@ -88,7 +88,7 @@ export function getDefaultConfig(): Config {
           latestReleaseStrategy: 'point-to-latest',
           skipPreReleases: false,
           pattern: '*',
-          includeAssets: true
+          includeAssets: true,
         },
         // MEDIUM: Social features - can be noisy, disabled by default
         pullRequests: {
@@ -100,12 +100,12 @@ export function getDefaultConfig(): Config {
               includeAuthor: true,
               includeTimestamp: true,
               includeSourceLink: true,
-              format: 'quoted'
+              format: 'quoted',
             },
             handleUpdates: true,
             preserveFormatting: true,
-            syncReplies: true
-          }
+            syncReplies: true,
+          },
         },
         issues: {
           enabled: false, // Changed: Can be very noisy, user choice
@@ -115,14 +115,14 @@ export function getDefaultConfig(): Config {
               includeAuthor: true,
               includeTimestamp: true,
               includeSourceLink: true,
-              format: 'quoted'
+              format: 'quoted',
             },
             handleUpdates: true,
             preserveFormatting: true,
-            syncReplies: true
-          }
-        }
-      }
+            syncReplies: true,
+          },
+        },
+      },
     },
     gitlab: {
       enabled: true,
@@ -136,18 +136,18 @@ export function getDefaultConfig(): Config {
             enabled: true, // Always enabled - required for proper timeline sync
             strategy: 'merge-timelines',
             createMergeCommits: true,
-            mergeMessage: 'Sync: Merge timeline from {source} to {target}'
+            mergeMessage: 'Sync: Merge timeline from {source} to {target}',
           },
           botBranches: {
             strategy: 'delete-orphaned', // Default: clean up orphaned bot branches
-            patterns: [] // Empty = use default patterns
-          }
+            patterns: [], // Empty = use default patterns
+          },
         },
         // HIGH: Core sync features - most users want these
         tags: {
           enabled: true,
           divergentCommitStrategy: 'skip',
-          pattern: '*'
+          pattern: '*',
         },
         releases: {
           enabled: true,
@@ -155,7 +155,7 @@ export function getDefaultConfig(): Config {
           latestReleaseStrategy: 'point-to-latest',
           skipPreReleases: false,
           pattern: '*',
-          includeAssets: true
+          includeAssets: true,
         },
         // MEDIUM: Social features - can be noisy, disabled by default
         pullRequests: {
@@ -167,12 +167,12 @@ export function getDefaultConfig(): Config {
               includeAuthor: true,
               includeTimestamp: true,
               includeSourceLink: true,
-              format: 'quoted'
+              format: 'quoted',
             },
             handleUpdates: true,
             preserveFormatting: true,
-            syncReplies: true
-          }
+            syncReplies: true,
+          },
         },
         issues: {
           enabled: false, // Changed: Can be very noisy, user choice
@@ -182,14 +182,14 @@ export function getDefaultConfig(): Config {
               includeAuthor: true,
               includeTimestamp: true,
               includeSourceLink: true,
-              format: 'quoted'
+              format: 'quoted',
             },
             handleUpdates: true,
             preserveFormatting: true,
-            syncReplies: true
-          }
-        }
-      }
-    }
+            syncReplies: true,
+          },
+        },
+      },
+    },
   }
 }

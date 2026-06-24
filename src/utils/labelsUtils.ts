@@ -5,7 +5,7 @@ export class LabelHelper {
    * Normalizes label configuration from config
    */
   static normalizeConfigLabels(
-    labels: string | string[] | undefined
+    labels: string | string[] | undefined,
   ): string[] {
     if (!labels) return []
     return Array.isArray(labels) ? labels : [labels]
@@ -24,7 +24,7 @@ export class LabelHelper {
    * GitLab labels come as either string[] or comma-separated string
    */
   static normalizeGitLabLabels(
-    labels: string[] | string | undefined
+    labels: string[] | string | undefined,
   ): string[] {
     if (!labels) return []
     if (Array.isArray(labels)) return labels
@@ -40,7 +40,7 @@ export class LabelHelper {
    */
   static combineLabels(
     sourceLabels: string[] | Array<{ name: string }> | string | undefined,
-    platform: 'github' | 'gitlab'
+    platform: 'github' | 'gitlab',
   ): string[] {
     // Normalize source labels based on platform
     const normalizedSourceLabels = Array.isArray(sourceLabels)
@@ -53,12 +53,12 @@ export class LabelHelper {
     const syncedLabels = ['synced']
 
     // Combine and deduplicate: source labels + synced label
-    var combinedLabels = [
-      ...new Set([...normalizedSourceLabels, ...syncedLabels])
+    let combinedLabels = [
+      ...new Set([...normalizedSourceLabels, ...syncedLabels]),
     ]
     // remove empty / null / undefined labels
     combinedLabels = combinedLabels.filter(
-      label => label !== '' && label !== null && label !== undefined
+      label => label !== '' && label !== null && label !== undefined,
     )
     return combinedLabels
   }
@@ -74,8 +74,8 @@ export class LabelHelper {
    * Checks if two label sets are equivalent
    */
   static areLabelsEqual(labels1: string[], labels2: string[]): boolean {
-    const normalized1 = labels1.map(l => l.trim()).sort()
-    const normalized2 = labels2.map(l => l.trim()).sort()
+    const normalized1 = labels1.map(l => l.trim()).toSorted()
+    const normalized2 = labels2.map(l => l.trim()).toSorted()
     return JSON.stringify(normalized1) === JSON.stringify(normalized2)
   }
 }

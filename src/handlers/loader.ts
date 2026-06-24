@@ -14,13 +14,13 @@ import { mergeWithDefaults } from '../utils/configMerger'
  * Normalize YAML arrays that might be parsed as objects
  * This handles cases where YAML arrays like ["item1", "item2"] get parsed as objects
  */
-function normalizeYamlArrays(obj: any): any {
+function normalizeYamlArrays(obj: unknown): unknown {
   if (Array.isArray(obj)) {
     return obj.map(normalizeYamlArrays)
   }
 
   if (obj && typeof obj === 'object') {
-    const result: any = {}
+    const result: unknown = {}
     for (const [key, value] of Object.entries(obj)) {
       // Check if this looks like an array that was parsed as an object
       if (
@@ -61,14 +61,14 @@ export async function loadConfig(): Promise<Config> {
     // Log configuration path
     if (CONFIG_PATH) {
       core.info(
-        `\x1b[36m⚠️ Using custom configuration file: ${CONFIG_PATH}\x1b[0m`
+        `\x1b[36m⚠️ Using custom configuration file: ${CONFIG_PATH}\x1b[0m`,
       )
     }
 
     // If config file doesn't exist, use default configuration
     if (!fs.existsSync(configPath)) {
       core.info(
-        `\x1b[33m⚠️ ${ErrorCodes.EFS01}: Using default configuration.\x1b[0m`
+        `\x1b[33m⚠️ ${ErrorCodes.EFS01}: Using default configuration.\x1b[0m`,
       )
       const validatedConfig = await validateConfig(defaultConfig)
       logConfigDetails(validatedConfig)
@@ -82,7 +82,7 @@ export async function loadConfig(): Promise<Config> {
     if (!configContent.trim()) {
       core.endGroup()
       core.setFailed(
-        `\x1b[33m⚠️ ${ErrorCodes.ECFG02}: Empty configuration file.\x1b[0m`
+        `\x1b[33m⚠️ ${ErrorCodes.ECFG02}: Empty configuration file.\x1b[0m`,
       )
     }
 
@@ -92,10 +92,10 @@ export async function loadConfig(): Promise<Config> {
       parsedConfig = yaml.load(configContent) as Record<string, unknown>
     } catch (yamlError) {
       core.warning(
-        `${ErrorCodes.ECFG01}: YAML parsing error: ${(yamlError as Error).message}`
+        `${ErrorCodes.ECFG01}: YAML parsing error: ${(yamlError as Error).message}`,
       )
       // Try to fix common YAML syntax errors
-      const fixedContent = (configContent as string)
+      const fixedContent = configContent
         .replace(/:\s*([truefals]{4,})\s*$/gim, ': $1') // Fix missing quotes
         .replace(/^\s*([^:]+?)\s*[=]\s*(.+)$/gm, '$1: $2') // Fix = instead of :
 
@@ -124,7 +124,7 @@ export async function loadConfig(): Promise<Config> {
       const mergedConfig = mergeWithDefaults(reasonedConfig, defaultConfig)
 
       // Validate the merged config
-      let config = ConfigSchema.parse(mergedConfig)
+      const config = ConfigSchema.parse(mergedConfig)
 
       // Validate and augment tokens
       const validatedConfig = await validateConfig(config)
@@ -139,11 +139,11 @@ export async function loadConfig(): Promise<Config> {
       if (error instanceof ZodError) {
         // Handle Zod validation errors
         const errorMessages = error.issues
-          .map((err: any) => `${err.path.join('.')}: ${err.message}`)
+          .map((err: unknown) => `${err.path.join('.')}: ${err.message}`)
           .join('\n')
 
         core.setFailed(
-          `\x1b[31m❌ Config validation failed:\x1b[0m\n${errorMessages}`
+          `\x1b[31m❌ Config validation failed:\x1b[0m\n${errorMessages}`,
         )
         core.endGroup()
         throw error
@@ -154,7 +154,7 @@ export async function loadConfig(): Promise<Config> {
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(
-        `\x1b[31m❌ Failed to load config: ${error.message}\x1b[0m`
+        `\x1b[31m❌ Failed to load config: ${error.message}\x1b[0m`,
       )
       core.endGroup()
     } else {

@@ -19,7 +19,7 @@ export class MetadataSync {
     try {
       const [githubDescription, gitlabDescription] = await Promise.all([
         this.githubClient.getRepositoryDescription(),
-        this.gitlabClient.getProjectDescription()
+        this.gitlabClient.getProjectDescription(),
       ])
 
       // If both descriptions exist and are different, prefer GitHub as source

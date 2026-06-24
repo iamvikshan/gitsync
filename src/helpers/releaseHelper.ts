@@ -12,7 +12,7 @@ export class ReleaseHelper {
     private platform: PlatformType,
     private repo: Repository,
     private config: Config,
-    private getProjectId?: () => Promise<number>
+    private getProjectId?: () => Promise<number>,
   ) {}
 
   async syncReleases(): Promise<Release[]> {
@@ -33,7 +33,7 @@ export class ReleaseHelper {
       core.info('\x1b[36m🏷️ Fetching GitHub Releases...\x1b[0m')
 
       const { data: releases } = await octokit.rest.repos.listReleases({
-        ...this.repo
+        ...this.repo,
       })
 
       const processedReleases: Release[] = releases.map(
@@ -66,19 +66,19 @@ export class ReleaseHelper {
               name: asset.name,
               url: asset.browser_download_url,
               size: asset.size,
-              contentType: asset.content_type
-            })
-          )
-        })
+              contentType: asset.content_type,
+            }),
+          ),
+        }),
       )
 
       core.info(
-        `\x1b[32m✓ Releases Fetched: ${processedReleases.length} releases\x1b[0m`
+        `\x1b[32m✓ Releases Fetched: ${processedReleases.length} releases\x1b[0m`,
       )
       return processedReleases
     } catch (error) {
       core.warning(
-        `\x1b[31m❌ Failed to Fetch GitHub Releases: ${error instanceof Error ? error.message : String(error)}\x1b[0m`
+        `\x1b[31m❌ Failed to Fetch GitHub Releases: ${error instanceof Error ? error.message : String(error)}\x1b[0m`,
       )
       return []
     }
@@ -97,7 +97,7 @@ export class ReleaseHelper {
       const releases = await gitlab.ProjectReleases.all(projectId)
 
       const processedReleases = releases.map(
-        (release: any): Release => ({
+        (release: unknown): Release => ({
           id: release.tag_name,
           tag: release.tag_name,
           name: release.name || release.tag_name,
@@ -111,19 +111,19 @@ export class ReleaseHelper {
               name: asset.name,
               url: asset.url,
               size: 0,
-              contentType: asset.link_type || 'application/octet-stream'
-            })
-          )
-        })
+              contentType: asset.link_type || 'application/octet-stream',
+            }),
+          ),
+        }),
       )
 
       core.info(
-        `\x1b[32m✓ ProjectReleases Fetched: ${processedReleases.length} releases\x1b[0m`
+        `\x1b[32m✓ ProjectReleases Fetched: ${processedReleases.length} releases\x1b[0m`,
       )
       return processedReleases
     } catch (error) {
       core.warning(
-        `\x1b[31m❌ Failed to Fetch GitLab ProjectReleases: ${error instanceof Error ? error.message : String(error)}\x1b[0m`
+        `\x1b[31m❌ Failed to Fetch GitLab ProjectReleases: ${error instanceof Error ? error.message : String(error)}\x1b[0m`,
       )
       return []
     }
@@ -146,7 +146,7 @@ export class ReleaseHelper {
         name: release.name,
         body: release.body,
         draft: release.draft,
-        prerelease: release.prerelease
+        prerelease: release.prerelease,
       })
 
       release.id = createdRelease.id.toString()
@@ -154,7 +154,8 @@ export class ReleaseHelper {
       throw new Error(
         `Failed to create release ${release.tag}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error },
       )
     }
   }
@@ -172,10 +173,10 @@ export class ReleaseHelper {
         core.debug(`Tag ${release.tag} does not exist in GitLab repository`)
       }
 
-      const releaseParams: any = {
+      const releaseParams: unknown = {
         tag_name: release.tag,
         name: release.name,
-        description: release.body
+        description: release.body,
       }
 
       if (tagExists) {
@@ -186,13 +187,14 @@ export class ReleaseHelper {
 
       const createdRelease = await gitlab.ProjectReleases.create(
         projectId,
-        releaseParams
+        releaseParams,
       )
 
       release.id = createdRelease.tag_name
     } catch (error) {
       throw new Error(
-        `Failed to create release ${release.tag}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create release ${release.tag}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -211,7 +213,7 @@ export class ReleaseHelper {
       const { data: existingRelease } =
         await octokit.rest.repos.getReleaseByTag({
           ...this.repo,
-          tag: release.tag
+          tag: release.tag,
         })
 
       await octokit.rest.repos.updateRelease({
@@ -221,13 +223,14 @@ export class ReleaseHelper {
         name: release.name,
         body: release.body,
         draft: release.draft,
-        prerelease: release.prerelease
+        prerelease: release.prerelease,
       })
     } catch (error) {
       throw new Error(
         `Failed to update release ${release.tag}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error },
       )
     }
   }
@@ -238,18 +241,19 @@ export class ReleaseHelper {
       const projectId = await this.getProjectId!()
       await gitlab.ProjectReleases.edit(projectId, release.tag, {
         name: release.name,
-        description: release.body
+        description: release.body,
       })
     } catch (error) {
       throw new Error(
-        `Failed to update release ${release.tag}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update release ${release.tag}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
 
   async downloadReleaseAsset(
     releaseId: string,
-    asset: ReleaseAsset
+    asset: ReleaseAsset,
   ): Promise<Buffer> {
     if (this.platform === 'github') {
       return this.downloadGitHubReleaseAsset(releaseId, asset)
@@ -260,7 +264,7 @@ export class ReleaseHelper {
 
   private async downloadGitHubReleaseAsset(
     releaseId: string,
-    asset: ReleaseAsset
+    asset: ReleaseAsset,
   ): Promise<Buffer> {
     try {
       const octokit = this.client as InstanceType<typeof GitHub>
@@ -270,9 +274,9 @@ export class ReleaseHelper {
           ...this.repo,
           asset_id: parseInt(releaseId),
           headers: {
-            Accept: 'application/octet-stream'
-          }
-        }
+            Accept: 'application/octet-stream',
+          },
+        },
       )
 
       return Buffer.from(response.data as unknown as Uint8Array)
@@ -280,14 +284,15 @@ export class ReleaseHelper {
       throw new Error(
         `Failed to download asset ${asset.name}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error },
       )
     }
   }
 
   private async downloadGitLabReleaseAsset(
     releaseId: string,
-    asset: ReleaseAsset
+    asset: ReleaseAsset,
   ): Promise<Buffer> {
     try {
       const response = await fetch(asset.url)
@@ -298,7 +303,8 @@ export class ReleaseHelper {
       return Buffer.from(arrayBuffer)
     } catch (error) {
       throw new Error(
-        `Failed to download asset ${asset.name}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to download asset ${asset.name}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -306,7 +312,7 @@ export class ReleaseHelper {
   async uploadReleaseAsset(
     releaseId: string,
     asset: ReleaseAsset,
-    content?: Buffer
+    content?: Buffer,
   ): Promise<void> {
     if (this.platform === 'github') {
       if (!content) {
@@ -321,7 +327,7 @@ export class ReleaseHelper {
   private async uploadGitHubReleaseAsset(
     releaseId: string,
     asset: ReleaseAsset,
-    content: Buffer
+    content: Buffer,
   ): Promise<void> {
     try {
       const octokit = this.client as InstanceType<typeof GitHub>
@@ -332,21 +338,22 @@ export class ReleaseHelper {
         data: content.toString('base64'),
         headers: {
           'content-type': asset.contentType,
-          'content-length': asset.size
-        }
+          'content-length': asset.size,
+        },
       })
     } catch (error) {
       throw new Error(
         `Failed to upload asset ${asset.name}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error },
       )
     }
   }
 
   private async uploadGitLabReleaseAsset(
     releaseId: string,
-    asset: ReleaseAsset
+    asset: ReleaseAsset,
   ): Promise<void> {
     try {
       const gitlab = this.client as Gitlab
@@ -358,12 +365,13 @@ export class ReleaseHelper {
         asset.name,
         asset.url,
         {
-          linkType: asset.contentType
-        }
+          linkType: asset.contentType,
+        },
       )
     } catch (error) {
       throw new Error(
-        `Failed to upload asset ${asset.name}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to upload asset ${asset.name}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }

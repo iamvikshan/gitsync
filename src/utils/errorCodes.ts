@@ -31,5 +31,5 @@ export const ErrorCodes = {
   ENET1: 'Network timeout',
   ENET2: 'DNS resolution failed',
   ENET3: 'Connection refused',
-  ENET4: 'Connection reset'
+  ENET4: 'Connection reset',
 } as const
