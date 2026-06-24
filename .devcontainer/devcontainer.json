@@ -4,13 +4,14 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
         "oven.bun-vscode",
-        "christian-kohler.npm-intellisense",
         "WakaTime.vscode-wakatime",
         "coderabbit.coderabbit-vscode",
-        "DeepScan.vscode-deepscan"
+        "aaron-bond.better-comments",
+        "usernamehw.errorlens",
+        "TypeScriptTeam.native-preview",
+        "eamodio.gitlens",
+        "oxc.oxc-vscode"
       ]
     }
   },
@@ -20,5 +21,5 @@
     }
   },
   "remoteUser": "root",
-  "postCreateCommand": "apt update && apt upgrade -y && bun upgrade && ln -sf /usr/share/zoneinfo/Africa/Nairobi /etc/localtime && curl -fsSL https://cli.coderabbit.ai/install.sh | sh && mkdir -p scripts && curl -sL https://raw.githubusercontent.com/iamvikshan/.github/main/scripts/bootstrap.sh > scripts/bootstrap.sh && chmod +x scripts/bootstrap.sh && scripts/bootstrap.sh --default"
+  "postCreateCommand": "bun i && bun bs"
 }
