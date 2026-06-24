@@ -15,7 +15,7 @@ export class IssueHelper {
     private platform: PlatformType,
     private repo: Repository,
     private config: Config,
-    private getProjectId?: () => Promise<number>
+    private getProjectId?: () => Promise<number>,
   ) {}
 
   async syncIssues(): Promise<Issue[]> {
@@ -38,15 +38,15 @@ export class IssueHelper {
       const { data: issues } = await octokit.rest.issues.listForRepo({
         ...this.repo,
         state: 'all',
-        per_page: 100
+        per_page: 100,
       })
 
       const commentSyncOptions = getCommentSyncOptions(this.config, 'issues')
 
       const processedIssues: Issue[] = await Promise.all(
         issues
-          .filter((issue: any) => !issue.pull_request)
-          .map(async (issue: any): Promise<Issue> => {
+          .filter((issue: unknown) => !issue.pull_request)
+          .map(async (issue: unknown): Promise<Issue> => {
             let comments: Comment[] = []
 
             if (commentSyncOptions.enabled) {
@@ -59,18 +59,18 @@ export class IssueHelper {
               labels: LabelHelper.combineLabels(issue.labels, 'github'),
               number: issue.number,
               state: issue.state as 'open' | 'closed',
-              comments
+              comments,
             }
-          })
+          }),
       )
 
       core.info(
-        `\x1b[32m✓ Issues Fetched: ${processedIssues.length} total issues\x1b[0m`
+        `\x1b[32m✓ Issues Fetched: ${processedIssues.length} total issues\x1b[0m`,
       )
       return processedIssues
     } catch (error) {
       core.warning(
-        `\x1b[31m❌ Failed to Fetch GitHub Issues: ${error instanceof Error ? error.message : String(error)}\x1b[0m`
+        `\x1b[31m❌ Failed to Fetch GitHub Issues: ${error instanceof Error ? error.message : String(error)}\x1b[0m`,
       )
       return []
     }
@@ -87,7 +87,7 @@ export class IssueHelper {
       const projectId = await this.getProjectId!()
 
       const issues = await gitlab.Issues.all({
-        projectId: projectId
+        projectId: projectId,
       })
 
       const commentSyncOptions = getCommentSyncOptions(this.config, 'issues')
@@ -105,21 +105,19 @@ export class IssueHelper {
             body: issue.description || '',
             labels: LabelHelper.combineLabels(issue.labels, 'gitlab'),
             number: issue.iid,
-            state: (issue.state === 'opened' ? 'open' : 'closed') as
-              | 'open'
-              | 'closed',
-            comments
+            state: issue.state === 'opened' ? 'open' : 'closed',
+            comments,
           }
-        })
+        }),
       )
 
       core.info(
-        `\x1b[32m✓ Issues Fetched: ${processedIssues.length} total issues\x1b[0m`
+        `\x1b[32m✓ Issues Fetched: ${processedIssues.length} total issues\x1b[0m`,
       )
       return processedIssues
     } catch (error) {
       core.warning(
-        `\x1b[31m❌ Failed to Fetch GitLab Issues: ${error instanceof Error ? error.message : String(error)}\x1b[0m`
+        `\x1b[31m❌ Failed to Fetch GitLab Issues: ${error instanceof Error ? error.message : String(error)}\x1b[0m`,
       )
       return []
     }
@@ -127,7 +125,7 @@ export class IssueHelper {
 
   async fetchIssueComments(
     issueNumber: number,
-    projectId?: number
+    projectId?: number,
   ): Promise<Comment[]> {
     if (this.platform === 'github') {
       return this.fetchGitHubIssueComments(issueNumber)
@@ -140,14 +138,14 @@ export class IssueHelper {
   }
 
   private async fetchGitHubIssueComments(
-    issueNumber: number
+    issueNumber: number,
   ): Promise<Comment[]> {
     try {
       const octokit = this.client as InstanceType<typeof GitHub>
       const { data: comments } = await octokit.rest.issues.listComments({
         ...this.repo,
         issue_number: issueNumber,
-        per_page: 100
+        per_page: 100,
       })
 
       return comments.map(
@@ -157,12 +155,12 @@ export class IssueHelper {
           author: comment.user?.login ?? '',
           createdAt: comment.created_at,
           updatedAt: comment.updated_at,
-          sourceUrl: comment.html_url
-        })
+          sourceUrl: comment.html_url,
+        }),
       )
     } catch (error) {
       core.warning(
-        `Failed to fetch comments for issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to fetch comments for issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`,
       )
       return []
     }
@@ -170,27 +168,27 @@ export class IssueHelper {
 
   private async fetchGitLabIssueComments(
     projectId: number,
-    issueIid: number
+    issueIid: number,
   ): Promise<Comment[]> {
     try {
       const gitlab = this.client as Gitlab
       const notes = await gitlab.IssueNotes.all(projectId, issueIid)
 
       return notes
-        .filter((note: any) => !note.system)
+        .filter((note: unknown) => !note.system)
         .map(
-          (note: any): Comment => ({
+          (note: unknown): Comment => ({
             id: note.id,
             body: note.body || '',
             author: note.author?.username || '',
             createdAt: note.created_at,
             updatedAt: note.updated_at,
-            sourceUrl: `${this.config.gitlab.host || 'https://gitlab.com'}/${this.config.gitlab.owner}/${this.config.gitlab.repo}/-/issues/${issueIid}#note_${note.id}`
-          })
+            sourceUrl: `${this.config.gitlab.host || 'https://gitlab.com'}/${this.config.gitlab.owner}/${this.config.gitlab.repo}/-/issues/${issueIid}#note_${note.id}`,
+          }),
         )
     } catch (error) {
       core.warning(
-        `Failed to fetch comments for issue #${issueIid}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to fetch comments for issue #${issueIid}: ${error instanceof Error ? error.message : String(error)}`,
       )
       return []
     }
@@ -214,11 +212,12 @@ export class IssueHelper {
         title: issue.title,
         body: issue.body,
         labels: normalizedLabels,
-        state: issue.state
+        state: issue.state,
       })
     } catch (error) {
       throw new Error(
-        `Failed to create issue "${issue.title}": ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create issue "${issue.title}": ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -231,18 +230,19 @@ export class IssueHelper {
 
       const createdIssue = await gitlab.Issues.create(projectId, issue.title, {
         description: issue.body,
-        labels: LabelHelper.formatForGitLab(normalizedLabels)
+        labels: LabelHelper.formatForGitLab(normalizedLabels),
       })
 
       // Close the issue if needed (must be done after creation)
       if (issue.state === 'closed' && createdIssue.iid) {
         await gitlab.Issues.edit(projectId, createdIssue.iid, {
-          stateEvent: 'close'
+          stateEvent: 'close',
         })
       }
     } catch (error) {
       throw new Error(
-        `Failed to create issue "${issue.title}": ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create issue "${issue.title}": ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -257,7 +257,7 @@ export class IssueHelper {
 
   private async updateGitHubIssue(
     issueNumber: number,
-    issue: Issue
+    issue: Issue,
   ): Promise<void> {
     try {
       const octokit = this.client as InstanceType<typeof GitHub>
@@ -269,20 +269,21 @@ export class IssueHelper {
         title: issue.title,
         body: issue.body,
         labels: normalizedLabels,
-        state: issue.state
+        state: issue.state,
       })
     } catch (error) {
       throw new Error(
         `Failed to update issue #${issueNumber}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error },
       )
     }
   }
 
   private async updateGitLabIssue(
     issueNumber: number,
-    issue: Issue
+    issue: Issue,
   ): Promise<void> {
     try {
       const gitlab = this.client as Gitlab
@@ -293,11 +294,12 @@ export class IssueHelper {
         title: issue.title,
         description: issue.body,
         labels: LabelHelper.formatForGitLab(normalizedLabels),
-        stateEvent: issue.state === 'closed' ? 'close' : 'reopen'
+        stateEvent: issue.state === 'closed' ? 'close' : 'reopen',
       })
     } catch (error) {
       throw new Error(
-        `Failed to update issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -312,25 +314,26 @@ export class IssueHelper {
 
   private async createGitHubIssueComment(
     issueNumber: number,
-    body: string
+    body: string,
   ): Promise<void> {
     try {
       const octokit = this.client as InstanceType<typeof GitHub>
       await octokit.rest.issues.createComment({
         ...this.repo,
         issue_number: issueNumber,
-        body
+        body,
       })
     } catch (error) {
       throw new Error(
-        `Failed to create comment on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create comment on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
 
   private async createGitLabIssueComment(
     issueNumber: number,
-    body: string
+    body: string,
   ): Promise<void> {
     try {
       const gitlab = this.client as Gitlab
@@ -338,7 +341,8 @@ export class IssueHelper {
       await gitlab.IssueNotes.create(projectId, issueNumber, body)
     } catch (error) {
       throw new Error(
-        `Failed to create comment on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create comment on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -346,38 +350,39 @@ export class IssueHelper {
   async updateIssueComment(
     issueNumberOrCommentId: number,
     commentIdOrBody: number | string,
-    body?: string
+    body?: string,
   ): Promise<void> {
     if (this.platform === 'github') {
       // GitHub only needs commentId and body
       return this.updateGitHubIssueComment(
         issueNumberOrCommentId,
-        commentIdOrBody as string
+        commentIdOrBody as string,
       )
     } else {
       // GitLab needs issueNumber, commentId, and body
       return this.updateGitLabIssueComment(
         issueNumberOrCommentId,
         commentIdOrBody as number,
-        body!
+        body!,
       )
     }
   }
 
   private async updateGitHubIssueComment(
     commentId: number,
-    body: string
+    body: string,
   ): Promise<void> {
     try {
       const octokit = this.client as InstanceType<typeof GitHub>
       await octokit.rest.issues.updateComment({
         ...this.repo,
         comment_id: commentId,
-        body
+        body,
       })
     } catch (error) {
       throw new Error(
-        `Failed to update comment #${commentId}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update comment #${commentId}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -385,17 +390,18 @@ export class IssueHelper {
   private async updateGitLabIssueComment(
     issueNumber: number,
     noteId: number,
-    body: string
+    body: string,
   ): Promise<void> {
     try {
       const gitlab = this.client as Gitlab
       const projectId = await this.getProjectId!()
       await gitlab.IssueNotes.edit(projectId, issueNumber, noteId, {
-        body
+        body,
       })
     } catch (error) {
       throw new Error(
-        `Failed to update comment #${noteId} on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update comment #${noteId} on issue #${issueNumber}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }

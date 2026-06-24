@@ -4,20 +4,22 @@ I am looking for dev to help me implement a plugin system, as detailed bellow.
 
 ## Overview
 
-This document outlines the proposed plugin architecture for the Advanced Git Sync project. The
-plugin system will enable users to add support for additional Git providers (e.g., Codeberg, Gitea,
-Bitbucket) without bloating the core package, keeping the main action lean while maintaining
-extensibility.
+This document outlines the proposed plugin architecture for the Advanced Git
+Sync project. The plugin system will enable users to add support for additional
+Git providers (e.g., Codeberg, Gitea, Bitbucket) without bloating the core
+package, keeping the main action lean while maintaining extensibility.
 
 ## 🎯 Design Goals
 
-1. **Modularity**: Core providers (GitHub, GitLab) remain in the main package, additional providers
-   are plugins
-2. **Size Optimization**: Reduce main package size by moving provider implementations to separate
-   npm packages
-3. **Simple Integration**: Users add plugins via configuration file with minimal setup
+1. **Modularity**: Core providers (GitHub, GitLab) remain in the main package,
+   additional providers are plugins
+2. **Size Optimization**: Reduce main package size by moving provider
+   implementations to separate npm packages
+3. **Simple Integration**: Users add plugins via configuration file with minimal
+   setup
 4. **Type Safety**: Full TypeScript support with shared type definitions
-5. **API Consistency**: All plugins implement the same interface for predictable behavior
+5. **API Consistency**: All plugins implement the same interface for predictable
+   behavior
 
 ## 🏗️ Architecture
 
@@ -87,7 +89,8 @@ providers:
 
 ## 📋 Plugin Interface Contract
 
-All plugins **must** implement the `IClient` interface defined in the core package:
+All plugins **must** implement the `IClient` interface defined in the core
+package:
 
 ```typescript
 // types/clientTypes.ts
@@ -102,7 +105,9 @@ export interface IClient {
   updateBranch(name: string, commitSha: string): Promise<void>
   commitExists(commitSha: string): Promise<boolean>
   getRecentCommits(branchName: string, limit: number): Promise<any[]>
-  getCommitDetails(commitSha: string): Promise<{ sha: string; date: string } | null>
+  getCommitDetails(
+    commitSha: string,
+  ): Promise<{ sha: string; date: string } | null>
 
   // Optional metadata methods
   getRepositoryDescription?(): Promise<string | null>
@@ -171,7 +176,13 @@ npm install --save-dev typescript @types/node
 
 ```typescript
 // src/CodebergClient.ts
-import { IClient, Config, Repository, Branch, BranchFilterOptions } from '@iamvikshan/git-sync'
+import {
+  IClient,
+  Config,
+  Repository,
+  Branch,
+  BranchFilterOptions,
+} from '@iamvikshan/git-sync'
 import axios, { AxiosInstance } from 'axios'
 
 export class CodebergClient implements IClient {
@@ -188,8 +199,8 @@ export class CodebergClient implements IClient {
       baseURL: config.codeberg?.host || 'https://codeberg.org/api/v1',
       headers: {
         Authorization: `token ${config.codeberg?.token}`,
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     })
   }
 
@@ -202,32 +213,42 @@ export class CodebergClient implements IClient {
   }
 
   async fetchBranches(filterOptions?: BranchFilterOptions): Promise<Branch[]> {
-    const { data } = await this.client.get(`/repos/${this.repo.owner}/${this.repo.repo}/branches`)
+    const { data } = await this.client.get(
+      `/repos/${this.repo.owner}/${this.repo.repo}/branches`,
+    )
 
     return data.map((branch: any) => ({
       name: branch.name,
       sha: branch.commit.id,
       protected: branch.protected,
-      lastCommitDate: branch.commit.timestamp
+      lastCommitDate: branch.commit.timestamp,
     }))
   }
 
   async createBranch(name: string, commitSha: string): Promise<void> {
-    await this.client.post(`/repos/${this.repo.owner}/${this.repo.repo}/branches`, {
-      new_branch_name: name,
-      old_ref_name: commitSha
-    })
+    await this.client.post(
+      `/repos/${this.repo.owner}/${this.repo.repo}/branches`,
+      {
+        new_branch_name: name,
+        old_ref_name: commitSha,
+      },
+    )
   }
 
   async updateBranch(name: string, commitSha: string): Promise<void> {
-    await this.client.patch(`/repos/${this.repo.owner}/${this.repo.repo}/git/refs/heads/${name}`, {
-      sha: commitSha
-    })
+    await this.client.patch(
+      `/repos/${this.repo.owner}/${this.repo.repo}/git/refs/heads/${name}`,
+      {
+        sha: commitSha,
+      },
+    )
   }
 
   async commitExists(commitSha: string): Promise<boolean> {
     try {
-      await this.client.get(`/repos/${this.repo.owner}/${this.repo.repo}/git/commits/${commitSha}`)
+      await this.client.get(
+        `/repos/${this.repo.owner}/${this.repo.repo}/git/commits/${commitSha}`,
+      )
       return true
     } catch {
       return false
@@ -235,16 +256,21 @@ export class CodebergClient implements IClient {
   }
 
   async getRecentCommits(branchName: string, limit: number): Promise<any[]> {
-    const { data } = await this.client.get(`/repos/${this.repo.owner}/${this.repo.repo}/commits`, {
-      params: { sha: branchName, limit }
-    })
+    const { data } = await this.client.get(
+      `/repos/${this.repo.owner}/${this.repo.repo}/commits`,
+      {
+        params: { sha: branchName, limit },
+      },
+    )
     return data
   }
 
-  async getCommitDetails(commitSha: string): Promise<{ sha: string; date: string } | null> {
+  async getCommitDetails(
+    commitSha: string,
+  ): Promise<{ sha: string; date: string } | null> {
     try {
       const { data } = await this.client.get(
-        `/repos/${this.repo.owner}/${this.repo.repo}/git/commits/${commitSha}`
+        `/repos/${this.repo.owner}/${this.repo.repo}/git/commits/${commitSha}`,
       )
       return { sha: commitSha, date: data.committer.date }
     } catch {
@@ -259,7 +285,7 @@ export const pluginMetadata = {
   version: '1.0.0',
   description: 'Codeberg provider plugin for Advanced Git Sync',
   author: 'iamvikshan',
-  clientClass: CodebergClient
+  clientClass: CodebergClient,
 }
 
 // Default export for plugin loader
@@ -296,7 +322,13 @@ export interface PluginConfig {
 ```typescript
 // src/plugins/loader.ts
 import * as core from '@actions/core'
-import { IClient, Config, Repository, PluginMetadata, PluginConfig } from '@/types'
+import {
+  IClient,
+  Config,
+  Repository,
+  PluginMetadata,
+  PluginConfig,
+} from '@/types'
 import * as path from 'path'
 import * as fs from 'fs'
 
@@ -308,7 +340,7 @@ export class PluginLoader {
    */
   static async loadPlugin(
     providerName: string,
-    pluginConfig: PluginConfig
+    pluginConfig: PluginConfig,
   ): Promise<PluginMetadata> {
     // Check cache
     if (this.loadedPlugins.has(providerName)) {
@@ -325,7 +357,7 @@ export class PluginLoader {
       } catch (error) {
         throw new Error(
           `Failed to load plugin "${pluginConfig.plugin}". ` +
-            `Ensure it's installed: npm install ${pluginConfig.plugin}`
+            `Ensure it's installed: npm install ${pluginConfig.plugin}`,
         )
       }
     } else if ('path' in pluginConfig.plugin) {
@@ -349,7 +381,7 @@ export class PluginLoader {
       name: providerName,
       version: pluginConfig.version || '1.0.0',
       description: `Plugin for ${providerName}`,
-      clientClass: ClientClass
+      clientClass: ClientClass,
     }
 
     // Validate plugin implements IClient interface
@@ -372,7 +404,7 @@ export class PluginLoader {
       'updateBranch',
       'commitExists',
       'getRecentCommits',
-      'getCommitDetails'
+      'getCommitDetails',
     ]
 
     for (const method of requiredMethods) {
@@ -385,7 +417,11 @@ export class PluginLoader {
   /**
    * Create client instance from loaded plugin
    */
-  static createClientInstance(metadata: PluginMetadata, config: Config, repo: Repository): IClient {
+  static createClientInstance(
+    metadata: PluginMetadata,
+    config: Config,
+    repo: Repository,
+  ): IClient {
     return new metadata.clientClass(config, repo)
   }
 }
@@ -427,7 +463,10 @@ export class ClientManager {
   /**
    * Get or create plugin client instance
    */
-  static async getPluginClient(providerName: string, config: Config): Promise<any> {
+  static async getPluginClient(
+    providerName: string,
+    config: Config,
+  ): Promise<any> {
     if (this.pluginClients.has(providerName)) {
       return this.pluginClients.get(providerName)!
     }
@@ -445,7 +484,7 @@ export class ClientManager {
     // Create repository object
     const repo = {
       owner: providerConfig.owner || '',
-      repo: providerConfig.repo || ''
+      repo: providerConfig.repo || '',
     }
 
     // Create client instance
@@ -504,7 +543,7 @@ export const PluginConfigSchema = z.object({
   plugin: z.union([
     z.string(), // NPM package name
     z.object({ path: z.string() }), // Local path
-    z.object({ url: z.string() }) // Remote URL
+    z.object({ url: z.string() }), // Remote URL
   ]),
   version: z.string().optional(),
   token: z.string().optional(),
@@ -512,14 +551,14 @@ export const PluginConfigSchema = z.object({
   owner: z.string().optional(),
   repo: z.string().optional(),
   projectId: z.number().optional(),
-  sync: SyncConfigSchema.optional()
+  sync: SyncConfigSchema.optional(),
 })
 
 // Allow dynamic provider keys
 export const ConfigSchema = z
   .object({
     gitlab: GitlabConfigSchema,
-    github: GithubConfigSchema
+    github: GithubConfigSchema,
   })
   .catchall(PluginConfigSchema) // Accept any additional provider configs
 
@@ -614,13 +653,13 @@ describe('CodebergClient', () => {
       codeberg: {
         enabled: true,
         token: 'test-token',
-        host: 'https://codeberg.org'
-      }
+        host: 'https://codeberg.org',
+      },
     } as Config
 
     mockRepo = {
       owner: 'test-owner',
-      repo: 'test-repo'
+      repo: 'test-repo',
     }
 
     client = new CodebergClient(mockConfig, mockRepo)
@@ -677,11 +716,13 @@ Create a central registry for approved plugins:
 
 ## 🔐 Security Considerations
 
-1. **Plugin Verification**: Only load verified plugins in production environments
+1. **Plugin Verification**: Only load verified plugins in production
+   environments
 2. **Sandboxing**: Consider using VM2 or isolated-vm for untrusted plugins
 3. **Token Management**: Plugins should never store or log tokens
 4. **Rate Limiting**: Implement rate limiting in plugin API calls
-5. **Dependency Auditing**: Regularly audit plugin dependencies for vulnerabilities
+5. **Dependency Auditing**: Regularly audit plugin dependencies for
+   vulnerabilities
 
 ## 🚀 Migration Path
 
@@ -754,7 +795,8 @@ To contribute a new provider plugin:
 - **Example Plugin**:
   [git-sync-plugin-codeberg](https://github.com/iamvikshan/git-sync-plugin-codeberg)
 - **Type Definitions**: Available in `@iamvikshan/git-sync` package
-- **Community Plugins**: [Plugin Registry](https://github.com/iamvikshan/gitsync/wiki/Plugins)
+- **Community Plugins**:
+  [Plugin Registry](https://github.com/iamvikshan/gitsync/wiki/Plugins)
 
 ## 🔮 Future Enhancements
 

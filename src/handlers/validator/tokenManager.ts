@@ -40,7 +40,7 @@ export class TokenManager {
       }
     } catch (error) {
       core.debug(
-        `Could not load .env file: ${error instanceof Error ? error.message : String(error)}`
+        `Could not load .env file: ${error instanceof Error ? error.message : String(error)}`,
       )
     }
 
@@ -63,7 +63,7 @@ export class TokenManager {
 
     if (!inputToken && envToken) {
       warnings.push(
-        'Using default GITHUB_TOKEN. This may have limited permissions. Consider providing a custom token with explicit repository access.'
+        'Using default GITHUB_TOKEN. This may have limited permissions. Consider providing a custom token with explicit repository access.',
       )
     }
 

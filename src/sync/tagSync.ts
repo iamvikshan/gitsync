@@ -4,7 +4,7 @@ import { GitLabClient } from '../structures/GitLab'
 
 export async function syncTags(
   source: GitHubClient | GitLabClient,
-  target: GitHubClient | GitLabClient
+  target: GitHubClient | GitLabClient,
 ) {
   try {
     const sourceTags = await source.syncTags()
@@ -15,7 +15,7 @@ export async function syncTags(
 
     sourceTags.sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     )
 
     const tagsToSync = sourceTags.filter(sourceTag => {
@@ -49,7 +49,7 @@ export async function syncTags(
           errorMessage.includes('Not Found')
         ) {
           core.warning(
-            `Skipping tag ${tag.name}: Commit ${tag.commitSha} does not exist in target repository. This is normal when repositories have different commit histories.`
+            `Skipping tag ${tag.name}: Commit ${tag.commitSha} does not exist in target repository. This is normal when repositories have different commit histories.`,
           )
         } else {
           core.warning(`Failed to sync tag ${tag.name}: ${errorMessage}`)
@@ -60,7 +60,7 @@ export async function syncTags(
     return tagsToSync
   } catch (error) {
     core.error(
-      `Failed to sync tags: ${error instanceof Error ? error.message : String(error)}`
+      `Failed to sync tags: ${error instanceof Error ? error.message : String(error)}`,
     )
     return []
   }

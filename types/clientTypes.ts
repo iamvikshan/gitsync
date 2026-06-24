@@ -14,9 +14,9 @@ export interface IClient {
   createBranch(name: string, commitSha: string): Promise<void>
   updateBranch(name: string, commitSha: string): Promise<void>
   commitExists(commitSha: string): Promise<boolean>
-  getRecentCommits(branchName: string, limit: number): Promise<any[]>
+  getRecentCommits(branchName: string, limit: number): Promise<unknown[]>
   getCommitDetails(
-    commitSha: string
+    commitSha: string,
   ): Promise<{ sha: string; date: string } | null>
   getRepositoryDescription?(): Promise<string | null>
   updateRepositoryDescription?(description: string): Promise<void>

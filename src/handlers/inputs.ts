@@ -24,10 +24,10 @@ export function logConfigDetails(config: Partial<Config>, hideTokens = true) {
   // Log the safe configuration with color and emojis
   core.info(`\x1b[36m Platform Configuration:\x1b[0m`)
   core.info(
-    `  \x1b[34m🦊 GitLab Enabled:\x1b[0m ${safeConfig.gitlab?.enabled || false}`
+    `  \x1b[34m🦊 GitLab Enabled:\x1b[0m ${safeConfig.gitlab?.enabled || false}`,
   )
   core.info(
-    `  \x1b[34m🐱 GitHub Enabled:\x1b[0m ${safeConfig.github?.enabled || false}`
+    `  \x1b[34m🐱 GitHub Enabled:\x1b[0m ${safeConfig.github?.enabled || false}`,
   )
 
   core.info(`\x1b[36m🔄 Sync Options:\x1b[0m`)
@@ -37,7 +37,7 @@ export function logConfigDetails(config: Partial<Config>, hideTokens = true) {
       JSON.stringify(safeConfig.gitlab.sync, null, 2)
         .split('\n')
         .map(line => `    \x1b[90m${line}\x1b[0m`)
-        .join('\n')
+        .join('\n'),
     )
   }
   if (safeConfig.github?.sync) {
@@ -46,7 +46,7 @@ export function logConfigDetails(config: Partial<Config>, hideTokens = true) {
       JSON.stringify(safeConfig.github.sync, null, 2)
         .split('\n')
         .map(line => `    \x1b[90m${line}\x1b[0m`)
-        .join('\n')
+        .join('\n'),
     )
   }
   // End the group for configuration loading logging

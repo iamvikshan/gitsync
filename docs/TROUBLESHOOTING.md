@@ -14,7 +14,8 @@ This guide helps you resolve common issues with the GitHub GitLab Sync Action.
 refusing to allow a Personal Access Token to create or update workflow `.github/workflows/releases.yml` without `workflow` scope
 ```
 
-**Cause:** The default `GITHUB_TOKEN` cannot modify workflow files for security reasons.
+**Cause:** The default `GITHUB_TOKEN` cannot modify workflow files for security
+reasons.
 
 **Solutions:**
 
@@ -156,21 +157,24 @@ Failed to sync tag v1.0.0: Failed to create tag v1.0.0: Not Found
 Failed to sync tag v1.1.0: Commit 98bc36f580aa5296a32805f54c279c0982759e5a does not exist in GitLab repository
 ```
 
-**Cause:** Tags reference commits that exist in one repository but not the other.
+**Cause:** Tags reference commits that exist in one repository but not the
+other.
 
 **Solutions:**
 
-The action provides several strategies to handle tags pointing to nonexistent commits:
+The action provides several strategies to handle tags pointing to nonexistent
+commits:
 
-1. **`skip` (Default)**: Automatically skips tags pointing to commits that don't exist in the target
-   repository
+1. **`skip` (Default)**: Automatically skips tags pointing to commits that don't
+   exist in the target repository
 
    ```yaml
    tags:
      divergentCommitStrategy: 'skip'
    ```
 
-2. **`create-anyway`**: Creates tags even if the commit doesn't exist in the target repository
+2. **`create-anyway`**: Creates tags even if the commit doesn't exist in the
+   target repository
 
    ```yaml
    tags:
@@ -183,8 +187,8 @@ The action provides several strategies to handle tags pointing to nonexistent co
      pattern: 'v*' # Only sync version tags
    ```
 
-**Note:** This behavior is normal when repositories have different commit histories due to timeline
-divergence.
+**Note:** This behavior is normal when repositories have different commit
+histories due to timeline divergence.
 
 #### Release Synchronization Failures
 
@@ -195,14 +199,16 @@ Failed to sync release v2.0.0: Commit abc123 does not exist in target repository
 Release v1.5.0 points to wrong commit after sync
 ```
 
-**Cause:** Releases reference commits that exist in one repository but not the other, often due to
-divergent commit histories.
+**Cause:** Releases reference commits that exist in one repository but not the
+other, often due to divergent commit histories.
 
 **Solutions:**
 
-The action provides intelligent strategies for handling releases with missing commits:
+The action provides intelligent strategies for handling releases with missing
+commits:
 
-1. **`divergentCommitStrategy`** - Controls how to handle releases pointing to nonexistent commits:
+1. **`divergentCommitStrategy`** - Controls how to handle releases pointing to
+   nonexistent commits:
 
    ```yaml
    releases:
@@ -218,8 +224,10 @@ The action provides intelligent strategies for handling releases with missing co
 **Strategy Explanations:**
 
 - **`skip`**: Skip releases pointing to commits that don't exist (safest)
-- **`create-anyway`**: Create releases even if commit doesn't exist (may cause issues)
-- **`point-to-latest`**: For latest release only, point to the latest commit in target repository
+- **`create-anyway`**: Create releases even if commit doesn't exist (may cause
+  issues)
+- **`point-to-latest`**: For latest release only, point to the latest commit in
+  target repository
 
 **Example Configuration:**
 
@@ -231,8 +239,8 @@ releases:
   pattern: 'v*'
 ```
 
-This ensures historical releases are skipped if commits don't exist, but the latest release always
-points to the current state.
+This ensures historical releases are skipped if commits don't exist, but the
+latest release always points to the current state.
 
 #### GitLab Merge Request Errors
 
@@ -242,7 +250,8 @@ points to the current state.
 Failed to merge MR #18: 405 Method Not Allowed
 ```
 
-**Cause:** Attempting to merge a merge request that is already closed or cannot be merged.
+**Cause:** Attempting to merge a merge request that is already closed or cannot
+be merged.
 
 **Solutions:**
 
@@ -376,8 +385,8 @@ Failed to merge MR #18: 405 Method Not Allowed
 
 **Solutions:**
 
-1. **Automatic conflict resolution**: The action automatically resolves conflicts by accepting
-   changes from the source repository
+1. **Automatic conflict resolution**: The action automatically resolves
+   conflicts by accepting changes from the source repository
 
 2. **Adjust merge strategy**:
 
@@ -434,9 +443,12 @@ Failed to merge MR #18: 405 Method Not Allowed
 
 **How the action handles it:**
 
-- **`merge-timelines`**: Creates merge commits to unify histories (preserves all work)
-- **`skip-diverged`**: Only syncs commits that exist on both sides (conservative)
-- **`force-match`**: Forces one repository to match the other exactly (destructive)
+- **`merge-timelines`**: Creates merge commits to unify histories (preserves all
+  work)
+- **`skip-diverged`**: Only syncs commits that exist on both sides
+  (conservative)
+- **`force-match`**: Forces one repository to match the other exactly
+  (destructive)
 
 ### Performance Issues
 

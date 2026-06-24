@@ -39,15 +39,15 @@ async function run(): Promise<void> {
     if (hasGitHubSync || hasGitLabSync) {
       if (hasGitHubSync && hasGitLabSync) {
         core.info(
-          '\x1b[36m🔄 Starting sync operations between GitHub and GitLab\x1b[0m'
+          '\x1b[36m🔄 Starting sync operations between GitHub and GitLab\x1b[0m',
         )
       } else if (hasGitHubSync) {
         core.info(
-          '\x1b[36m🔄 Starting sync FROM GitHub (GitLab enabled for receiving)\x1b[0m'
+          '\x1b[36m🔄 Starting sync FROM GitHub (GitLab enabled for receiving)\x1b[0m',
         )
       } else {
         core.info(
-          '\x1b[36m🔄 Starting sync FROM GitLab (GitHub enabled for receiving)\x1b[0m'
+          '\x1b[36m🔄 Starting sync FROM GitLab (GitHub enabled for receiving)\x1b[0m',
         )
       }
 
@@ -68,7 +68,7 @@ async function run(): Promise<void> {
           operation: async () => {
             const metadataSync = new MetadataSync(githubClient, gitlabClient)
             await metadataSync.syncDescription()
-          }
+          },
         },
         // PHASE 1: Branches (CRITICAL - must run first, with improved bidirectional sync)
         {
@@ -79,7 +79,7 @@ async function run(): Promise<void> {
             (config.gitlab.sync?.branches.enabled || false),
           operation: async () => {
             await syncBranchesBidirectional(githubClient, gitlabClient)
-          }
+          },
         },
         // Fallback to unidirectional sync if only one direction is enabled
         {
@@ -90,7 +90,7 @@ async function run(): Promise<void> {
             !(config.gitlab.sync?.branches.enabled || false),
           operation: async () => {
             await syncBranches(githubClient, gitlabClient)
-          }
+          },
         },
         {
           name: '\x1b[34m🌿 Branches (GitLab → GitHub)\x1b[0m',
@@ -100,8 +100,8 @@ async function run(): Promise<void> {
             (config.gitlab.sync?.branches.enabled || false),
           operation: async () => {
             await syncBranches(gitlabClient, githubClient)
-          }
-        }
+          },
+        },
       ]
 
       const tagOperations: {
@@ -116,7 +116,7 @@ async function run(): Promise<void> {
             hasBothPlatforms && (config.github.sync?.tags.enabled || false),
           operation: async () => {
             await syncTags(githubClient, gitlabClient)
-          }
+          },
         },
         {
           name: '\x1b[36m🏷 Tags (GitLab → GitHub)\x1b[0m',
@@ -124,8 +124,8 @@ async function run(): Promise<void> {
             hasBothPlatforms && (config.gitlab.sync?.tags.enabled || false),
           operation: async () => {
             await syncTags(gitlabClient, githubClient)
-          }
-        }
+          },
+        },
       ]
 
       const releaseOperations: {
@@ -140,7 +140,7 @@ async function run(): Promise<void> {
             hasBothPlatforms && (config.github.sync?.releases.enabled || false),
           operation: async () => {
             await syncReleases(githubClient, gitlabClient)
-          }
+          },
         },
         {
           name: '\x1b[33m🏷️ Releases (GitLab → GitHub)\x1b[0m',
@@ -148,8 +148,8 @@ async function run(): Promise<void> {
             hasBothPlatforms && (config.gitlab.sync?.releases.enabled || false),
           operation: async () => {
             await syncReleases(gitlabClient, githubClient)
-          }
-        }
+          },
+        },
       ]
 
       const socialOperations: {
@@ -163,29 +163,29 @@ async function run(): Promise<void> {
           enabled: config.github.sync?.pullRequests.enabled || false,
           operation: async () => {
             await syncPullRequests(githubClient, gitlabClient)
-          }
+          },
         },
         {
           name: '\x1b[32m🔀 Pull Requests (GitLab → GitHub)\x1b[0m',
           enabled: config.gitlab.sync?.pullRequests.enabled || false,
           operation: async () => {
             await syncPullRequests(gitlabClient, githubClient)
-          }
+          },
         },
         {
           name: '\x1b[35m❗ Issues (GitHub → GitLab)\x1b[0m',
           enabled: config.github.sync?.issues.enabled || false,
           operation: async () => {
             await syncIssues(githubClient, gitlabClient)
-          }
+          },
         },
         {
           name: '\x1b[35m❗ Issues (GitLab → GitHub)\x1b[0m',
           enabled: config.gitlab.sync?.issues.enabled || false,
           operation: async () => {
             await syncIssues(gitlabClient, githubClient)
-          }
-        }
+          },
+        },
       ]
 
       // Execute sync operations in chronological order
@@ -193,7 +193,7 @@ async function run(): Promise<void> {
         ...coreOperations,
         ...tagOperations,
         ...releaseOperations,
-        ...socialOperations
+        ...socialOperations,
       ]
       const enabledOperations = allOperations.filter(op => op.enabled)
 
@@ -203,17 +203,17 @@ async function run(): Promise<void> {
       }
 
       core.info(
-        `\x1b[90m➜ Starting ${enabledOperations.length} sync operations with chronological dependencies...\x1b[0m`
+        `\x1b[90m➜ Starting ${enabledOperations.length} sync operations with chronological dependencies...\x1b[0m`,
       )
 
       // Execute operations in phases to respect dependencies
-      const results: any[] = []
+      const results: unknown[] = []
 
       // PHASE 1: Core operations (branches) - sequential within phase
       const enabledCoreOps = coreOperations.filter(op => op.enabled)
       if (enabledCoreOps.length > 0) {
         core.info(
-          '\x1b[90m📋 Phase 1: Branch synchronization (foundation)\x1b[0m'
+          '\x1b[90m📋 Phase 1: Branch synchronization (foundation)\x1b[0m',
         )
         for (const syncOp of enabledCoreOps) {
           try {
@@ -232,13 +232,13 @@ async function run(): Promise<void> {
             // Skip error logging for silent metadata sync
             if (syncOp.name !== 'Repository Metadata Sync') {
               core.error(
-                `\x1b[31m❌ Failed: ${syncOp.name} - ${errorMessage}\x1b[0m`
+                `\x1b[31m❌ Failed: ${syncOp.name} - ${errorMessage}\x1b[0m`,
               )
             }
             results.push({
               name: syncOp.name,
               status: 'failed',
-              error: errorMessage
+              error: errorMessage,
             })
           }
         }
@@ -259,20 +259,20 @@ async function run(): Promise<void> {
               const errorMessage =
                 error instanceof Error ? error.message : String(error)
               core.error(
-                `\x1b[31m❌ Failed: ${syncOp.name} - ${errorMessage}\x1b[0m`
+                `\x1b[31m❌ Failed: ${syncOp.name} - ${errorMessage}\x1b[0m`,
               )
               return {
                 name: syncOp.name,
                 status: 'failed',
-                error: errorMessage
+                error: errorMessage,
               }
             }
-          })
+          }),
         )
         results.push(
           ...tagResults.map(r =>
-            r.status === 'fulfilled' ? r.value : r.reason
-          )
+            r.status === 'fulfilled' ? r.value : r.reason,
+          ),
         )
       }
 
@@ -291,20 +291,20 @@ async function run(): Promise<void> {
               const errorMessage =
                 error instanceof Error ? error.message : String(error)
               core.error(
-                `\x1b[31m❌ Failed: ${syncOp.name} - ${errorMessage}\x1b[0m`
+                `\x1b[31m❌ Failed: ${syncOp.name} - ${errorMessage}\x1b[0m`,
               )
               return {
                 name: syncOp.name,
                 status: 'failed',
-                error: errorMessage
+                error: errorMessage,
               }
             }
-          })
+          }),
         )
         results.push(
           ...releaseResults.map(r =>
-            r.status === 'fulfilled' ? r.value : r.reason
-          )
+            r.status === 'fulfilled' ? r.value : r.reason,
+          ),
         )
       }
 
@@ -312,7 +312,7 @@ async function run(): Promise<void> {
       const enabledSocialOps = socialOperations.filter(op => op.enabled)
       if (enabledSocialOps.length > 0) {
         core.info(
-          '\x1b[90m📋 Phase 4: Social feature synchronization (PRs & Issues)\x1b[0m'
+          '\x1b[90m📋 Phase 4: Social feature synchronization (PRs & Issues)\x1b[0m',
         )
         const socialResults = await Promise.allSettled(
           enabledSocialOps.map(async syncOp => {
@@ -325,20 +325,20 @@ async function run(): Promise<void> {
               const errorMessage =
                 error instanceof Error ? error.message : String(error)
               core.error(
-                `\x1b[31m❌ Failed: ${syncOp.name} - ${errorMessage}\x1b[0m`
+                `\x1b[31m❌ Failed: ${syncOp.name} - ${errorMessage}\x1b[0m`,
               )
               return {
                 name: syncOp.name,
                 status: 'failed',
-                error: errorMessage
+                error: errorMessage,
               }
             }
-          })
+          }),
         )
         results.push(
           ...socialResults.map(r =>
-            r.status === 'fulfilled' ? r.value : r.reason
-          )
+            r.status === 'fulfilled' ? r.value : r.reason,
+          ),
         )
       }
 
@@ -347,11 +347,11 @@ async function run(): Promise<void> {
       const failed = results.filter(r => r.status === 'failed')
 
       core.info(
-        `\x1b[32m✓ Completed: ${successful.length} operations successful\x1b[0m`
+        `\x1b[32m✓ Completed: ${successful.length} operations successful\x1b[0m`,
       )
       if (failed.length > 0) {
         core.warning(
-          `\x1b[33m⚠️ Failed: ${failed.length} operations failed\x1b[0m`
+          `\x1b[33m⚠️ Failed: ${failed.length} operations failed\x1b[0m`,
         )
         // Don't fail the entire action if some operations fail, just warn
       }
@@ -359,7 +359,7 @@ async function run(): Promise<void> {
       core.info('\x1b[32m🎉 Sync completed successfully!\x1b[0m')
     } else {
       core.warning(
-        '\x1b[33m⚠️ Sync not performed: No sync operations are configured. At least one platform must have sync entities enabled.\x1b[0m'
+        '\x1b[33m⚠️ Sync not performed: No sync operations are configured. At least one platform must have sync entities enabled.\x1b[0m',
       )
     }
 
@@ -370,11 +370,11 @@ async function run(): Promise<void> {
 
     if (error instanceof Error) {
       core.setFailed(
-        `\x1b[31m❌ Sync Failed: ${error.message} ${error.stack} \x1b[0m`
+        `\x1b[31m❌ Sync Failed: ${error.message} ${error.stack} \x1b[0m`,
       )
     } else {
       core.setFailed(
-        '\x1b[31m❌ An unexpected error occurred during synchronization\x1b[0m'
+        '\x1b[31m❌ An unexpected error occurred during synchronization\x1b[0m',
       )
     }
 

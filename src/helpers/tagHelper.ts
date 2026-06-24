@@ -14,7 +14,7 @@ export class TagHelper {
     private platform: PlatformType,
     private repo: Repository,
     private config: Config,
-    private getProjectId?: () => Promise<number>
+    private getProjectId?: () => Promise<number>,
   ) {}
 
   private getRepoPathFromConfig(): string | null {
@@ -50,7 +50,7 @@ export class TagHelper {
       core.info('\x1b[36m🏷 Fetching GitHub Tags...\x1b[0m')
 
       const { data: tags } = await octokit.rest.repos.listTags({
-        ...this.repo
+        ...this.repo,
       })
 
       const processedTags = await Promise.all(
@@ -58,37 +58,37 @@ export class TagHelper {
           try {
             const { data: refData } = await octokit.rest.git.getRef({
               ...this.repo,
-              ref: `tags/${tag.name}`
+              ref: `tags/${tag.name}`,
             })
 
             const { data: commitData } = await octokit.rest.git.getCommit({
               ...this.repo,
-              commit_sha: refData.object.sha
+              commit_sha: refData.object.sha,
             })
 
             return {
               name: tag.name,
               createdAt: commitData.author.date,
-              commitSha: tag.commit.sha
+              commitSha: tag.commit.sha,
             }
           } catch (error) {
             core.warning(
-              `\x1b[33m⚠️ Failed to process tag ${tag.name}: ${error instanceof Error ? error.message : String(error)}\x1b[0m`
+              `\x1b[33m⚠️ Failed to process tag ${tag.name}: ${error instanceof Error ? error.message : String(error)}\x1b[0m`,
             )
             return {
               name: tag.name,
               createdAt: new Date().toISOString(),
-              commitSha: tag.commit.sha
+              commitSha: tag.commit.sha,
             }
           }
-        })
+        }),
       )
 
       core.info(`\x1b[32m✓ Tags Fetched: ${processedTags.length} tags\x1b[0m`)
       return processedTags
     } catch (error) {
       core.warning(
-        `\x1b[31m❌ Failed to Fetch GitHub Tags: ${error instanceof Error ? error.message : String(error)}\x1b[0m`
+        `\x1b[31m❌ Failed to Fetch GitHub Tags: ${error instanceof Error ? error.message : String(error)}\x1b[0m`,
       )
       return []
     }
@@ -107,7 +107,7 @@ export class TagHelper {
       const tags = await gitlab.Tags.all(projectId)
 
       if (tags.length > 0 && !this.repoPath) {
-        const apiUrl = (tags[0] as any)._links?.self || ''
+        const apiUrl = (tags[0] as unknown)._links?.self || ''
         const match = apiUrl.match(/projects\/(.+?)\/repository/)
         if (match) {
           this.repoPath = decodeURIComponent(match[1])
@@ -122,15 +122,15 @@ export class TagHelper {
         }) => ({
           name: tag.name,
           createdAt: tag.commit.created_at,
-          commitSha: tag.commit.id
-        })
+          commitSha: tag.commit.id,
+        }),
       )
 
       core.info(`\x1b[32m✓ Tags Fetched: ${processedTags.length} tags\x1b[0m`)
       return processedTags
     } catch (error) {
       core.warning(
-        `\x1b[31m❌ Failed to Fetch GitLab Tags: ${error instanceof Error ? error.message : String(error)}\x1b[0m`
+        `\x1b[31m❌ Failed to Fetch GitLab Tags: ${error instanceof Error ? error.message : String(error)}\x1b[0m`,
       )
       return []
     }
@@ -150,24 +150,26 @@ export class TagHelper {
       try {
         await octokit.rest.git.getCommit({
           ...this.repo,
-          commit_sha: tag.commitSha
+          commit_sha: tag.commitSha,
         })
       } catch (error) {
         throw new Error(
-          `Commit ${tag.commitSha} does not exist in GitHub repository`
+          `Commit ${tag.commitSha} does not exist in GitHub repository`,
+          { cause: error },
         )
       }
 
       await octokit.rest.git.createRef({
         ...this.repo,
         ref: `refs/tags/${tag.name}`,
-        sha: tag.commitSha
+        sha: tag.commitSha,
       })
     } catch (error) {
       throw new Error(
         `Failed to create tag ${tag.name}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error },
       )
     }
   }
@@ -181,7 +183,8 @@ export class TagHelper {
         await gitlab.Commits.show(projectId, tag.commitSha)
       } catch (error) {
         throw new Error(
-          `Commit ${tag.commitSha} does not exist in GitLab repository`
+          `Commit ${tag.commitSha} does not exist in GitLab repository`,
+          { cause: error },
         )
       }
 
@@ -189,7 +192,9 @@ export class TagHelper {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error)
-      throw new Error(`Failed to create tag ${tag.name}: ${errorMessage}`)
+      throw new Error(`Failed to create tag ${tag.name}: ${errorMessage}`, {
+        cause: error,
+      })
     }
   }
 
@@ -206,7 +211,7 @@ export class TagHelper {
       const octokit = this.client as InstanceType<typeof GitHub>
       await octokit.rest.git.deleteRef({
         ...this.repo,
-        ref: `tags/${tag.name}`
+        ref: `tags/${tag.name}`,
       })
 
       await this.createGitHubTag(tag)
@@ -214,7 +219,8 @@ export class TagHelper {
       throw new Error(
         `Failed to update tag ${tag.name}: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
+        { cause: error },
       )
     }
   }
@@ -228,7 +234,8 @@ export class TagHelper {
         await gitlab.Commits.show(projectId, tag.commitSha)
       } catch (error) {
         throw new Error(
-          `Commit ${tag.commitSha} does not exist in GitLab repository`
+          `Commit ${tag.commitSha} does not exist in GitLab repository`,
+          { cause: error },
         )
       }
 
@@ -242,7 +249,9 @@ export class TagHelper {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error)
-      throw new Error(`Failed to update tag ${tag.name}: ${errorMessage}`)
+      throw new Error(`Failed to update tag ${tag.name}: ${errorMessage}`, {
+        cause: error,
+      })
     }
   }
 }

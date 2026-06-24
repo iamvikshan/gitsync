@@ -21,29 +21,29 @@ gitlab:
     branches:
       enabled: true
       protected: true # Include protected branches
-      pattern: "*" # Pattern to match branch names (* = all branches)
+      pattern: '*' # Pattern to match branch names (* = all branches)
       historySync: # Timeline merging configuration (always enabled for proper sync)
         enabled: true
-        strategy: "merge-timelines" # merge-timelines | skip-diverged | force-match
+        strategy: 'merge-timelines' # merge-timelines | skip-diverged | force-match
         createMergeCommits: true
-        mergeMessage: "Sync: Merge timeline from {source} to {target}"
+        mergeMessage: 'Sync: Merge timeline from {source} to {target}'
       # 🤖 Bot branch handling - control how bot-created branches are managed
       botBranches:
-        strategy: "delete-orphaned" # delete-orphaned | sync | skip
+        strategy: 'delete-orphaned' # delete-orphaned | sync | skip
         patterns: [] # Empty = use defaults, populated = override defaults entirely
         # Default patterns: dependabot/*, renovate/*, copilot/*, feature/*, fix/*, etc.
 
     # 🟡 HIGH: Core features (enabled by default) - uncomment to customize
     tags:
       enabled: true # Auto-enabled if releases are enabled
-      divergentCommitStrategy: "skip" # skip | create-anyway | point-to-latest
-      pattern: "*" # Pattern to match tag names
+      divergentCommitStrategy: 'skip' # skip | create-anyway | point-to-latest
+      pattern: '*' # Pattern to match tag names
     releases:
       enabled: true # Sync releases and their assets
-      divergentCommitStrategy: "skip" # skip | create-anyway
-      latestReleaseStrategy: "point-to-latest" # skip | point-to-latest | create-anyway
+      divergentCommitStrategy: 'skip' # skip | create-anyway
+      latestReleaseStrategy: 'point-to-latest' # skip | point-to-latest | create-anyway
       skipPreReleases: false # Skip pre-release versions
-      pattern: "*" # Pattern to match release names
+      pattern: '*' # Pattern to match release names
       includeAssets: true # Include release assets
 
     # 🟠 MEDIUM: Social features (disabled by default) - uncomment to enable
@@ -86,29 +86,29 @@ github:
     branches:
       enabled: true
       protected: true # Include protected branches
-      pattern: "*" # Pattern to match branch names
+      pattern: '*' # Pattern to match branch names
       historySync: # Timeline merging configuration (always enabled for proper sync)
         enabled: true
-        strategy: "merge-timelines" # merge-timelines | skip-diverged | force-match
+        strategy: 'merge-timelines' # merge-timelines | skip-diverged | force-match
         createMergeCommits: true
-        mergeMessage: "Sync: Merge timeline from {source} to {target}"
+        mergeMessage: 'Sync: Merge timeline from {source} to {target}'
       # 🤖 Bot branch handling - control how bot-created branches are managed
       botBranches:
-        strategy: "delete-orphaned" # delete-orphaned | sync | skip
+        strategy: 'delete-orphaned' # delete-orphaned | sync | skip
         patterns: [] # Empty = use defaults, populated = override defaults entirely
         # Default patterns: dependabot/*, renovate/*, copilot/*, feature/*, fix/*, etc.
 
     # 🟡 HIGH: Core features (enabled by default) - uncomment to customize
     tags:
       enabled: true # Auto-enabled if releases are enabled
-      divergentCommitStrategy: "skip" # skip | create-anyway | point-to-latest
-      pattern: "*" # Pattern to match tag names
+      divergentCommitStrategy: 'skip' # skip | create-anyway | point-to-latest
+      pattern: '*' # Pattern to match tag names
     releases:
       enabled: true # Sync releases and their assets
-      divergentCommitStrategy: "skip" # skip | create-anyway
-      latestReleaseStrategy: "point-to-latest" # skip | point-to-latest | create-anyway
+      divergentCommitStrategy: 'skip' # skip | create-anyway
+      latestReleaseStrategy: 'point-to-latest' # skip | point-to-latest | create-anyway
       skipPreReleases: false # Skip pre-release versions
-      pattern: "*" # Pattern to match release names
+      pattern: '*' # Pattern to match release names
       includeAssets: true # Include release assets
 
 

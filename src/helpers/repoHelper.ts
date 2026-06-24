@@ -10,7 +10,7 @@ export class RepoHelper {
   constructor(
     private client: PlatformClient,
     private platform: PlatformType,
-    private repo: Repository
+    private repo: Repository,
   ) {}
 
   async createIfNotExists(): Promise<boolean | number> {
@@ -26,7 +26,7 @@ export class RepoHelper {
       const octokit = this.client as InstanceType<typeof GitHub>
       await octokit.rest.repos.get({ ...this.repo })
       return false
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error.status === 404) {
         return await this.createGitHubRepository()
       }
@@ -38,7 +38,7 @@ export class RepoHelper {
     try {
       const octokit = this.client as InstanceType<typeof GitHub>
       core.info(
-        `⚠️ Repository ${this.repo.owner}/${this.repo.repo} not found. Creating it...`
+        `⚠️ Repository ${this.repo.owner}/${this.repo.repo} not found. Creating it...`,
       )
 
       const isOrg = await this.isGitHubOrganizationRepo()
@@ -51,38 +51,41 @@ export class RepoHelper {
         auto_init: true,
         has_issues: true,
         has_projects: false,
-        has_wiki: false
+        has_wiki: false,
       }
 
       if (isOrg) {
         await octokit.rest.repos.createInOrg({
           org: this.repo.owner,
-          ...repoConfig
+          ...repoConfig,
         })
       } else {
         await octokit.rest.repos.createForAuthenticatedUser(repoConfig)
       }
 
       core.info(
-        `✓ Repository ${this.repo.owner}/${this.repo.repo} created successfully`
+        `✓ Repository ${this.repo.owner}/${this.repo.repo} created successfully`,
       )
       return true
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error.status === 403) {
         throw new Error(
           `Insufficient permissions to create repository ${this.repo.owner}/${this.repo.repo}. ` +
-            'Ensure your token has the required "repo" scope.'
+            'Ensure your token has the required "repo" scope.',
+          { cause: error },
         )
       } else if (error.status === 422) {
         throw new Error(
           `Repository name "${this.repo.repo}" conflicts or validation failed. ` +
-            'This typically means the repository exists but is inaccessible due to permissions.'
+            'This typically means the repository exists but is inaccessible due to permissions.',
+          { cause: error },
         )
       } else {
         throw new Error(
           `Failed to create repository ${this.repo.owner}/${this.repo.repo}: ${
             error.message || 'Unknown error'
-          }`
+          }`,
+          { cause: error },
         )
       }
     }
@@ -93,12 +96,12 @@ export class RepoHelper {
       const octokit = this.client as InstanceType<typeof GitHub>
       await octokit.rest.orgs.get({ org: this.repo.owner })
       return true
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error.status === 404) {
         return false
       }
       core.debug(
-        `Could not determine if ${this.repo.owner} is an organization, assuming personal repository`
+        `Could not determine if ${this.repo.owner} is an organization, assuming personal repository`,
       )
       return false
     }
@@ -115,7 +118,7 @@ export class RepoHelper {
       }
 
       return project.id
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error.response?.status === 404 || error.message?.includes('404')) {
         return await this.createGitLabProject()
       }
@@ -127,12 +130,12 @@ export class RepoHelper {
     try {
       const gitlab = this.client as Gitlab
       core.info(
-        `⚠️ Project ${this.repo.owner}/${this.repo.repo} not found. Creating it...`
+        `⚠️ Project ${this.repo.owner}/${this.repo.repo} not found. Creating it...`,
       )
 
       const namespaceInfo = await this.findGitLabNamespace()
 
-      const projectConfig: any = {
+      const projectConfig: unknown = {
         name: this.repo.repo,
         path: this.repo.repo,
         visibility: 'private',
@@ -152,8 +155,8 @@ export class RepoHelper {
           prevent_secrets: false,
           author_email_regex: '',
           file_name_regex: '',
-          max_file_size: 0
-        }
+          max_file_size: 0,
+        },
       }
 
       // Only set namespace_id for group namespaces.
@@ -170,25 +173,28 @@ export class RepoHelper {
       }
 
       core.info(
-        `✓ Project ${this.repo.owner}/${this.repo.repo} created successfully with force push enabled`
+        `✓ Project ${this.repo.owner}/${this.repo.repo} created successfully with force push enabled`,
       )
       return createdProject.id
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error.response?.status === 403) {
         throw new Error(
           `Insufficient permissions to create project ${this.repo.owner}/${this.repo.repo}. ` +
-            'Ensure your token has the required "api" scope.'
+            'Ensure your token has the required "api" scope.',
+          { cause: error },
         )
       } else if (error.response?.status === 400) {
         throw new Error(
           `Project name "${this.repo.repo}" conflicts or validation failed. ` +
-            'This typically means the project exists but is inaccessible due to permissions.'
+            'This typically means the project exists but is inaccessible due to permissions.',
+          { cause: error },
         )
       } else {
         throw new Error(
           `Failed to create project ${this.repo.owner}/${this.repo.repo}: ${
             error.message || 'Unknown error'
-          }`
+          }`,
+          { cause: error },
         )
       }
     }
@@ -205,13 +211,13 @@ export class RepoHelper {
         const group = await gitlab.Groups.show(this.repo.owner)
         if (group?.id) {
           core.info(
-            `Found group namespace: ${this.repo.owner} (ID: ${group.id})`
+            `Found group namespace: ${this.repo.owner} (ID: ${group.id})`,
           )
           return { id: group.id, type: 'group' }
         }
       } catch (error) {
         core.debug(
-          `${this.repo.owner} is not a group, checking personal namespace: ${error}`
+          `${this.repo.owner} is not a group, checking personal namespace: ${error}`,
         )
       }
 
@@ -231,21 +237,21 @@ export class RepoHelper {
           `Namespace mismatch: configured owner "${this.repo.owner}" does not match ` +
             `the authenticated GitLab user "${currentUser?.username}" and is not a group. ` +
             `Cannot create projects in another user's namespace. ` +
-            `Please ensure the gitlab.owner matches your GitLab username or is a group you have access to.`
+            `Please ensure the gitlab.owner matches your GitLab username or is a group you have access to.`,
         )
       } catch (error) {
         core.debug(`Could not get current user: ${error}`)
       }
 
       core.warning(
-        `Could not determine namespace for ${this.repo.owner}, using default namespace`
+        `Could not determine namespace for ${this.repo.owner}, using default namespace`,
       )
       return undefined
     } catch (error) {
       core.warning(
         `Error during namespace resolution for ${this.repo.owner}: ${
           error instanceof Error ? error.message : 'Unknown error'
-        }, using default namespace`
+        }, using default namespace`,
       )
       return undefined
     }

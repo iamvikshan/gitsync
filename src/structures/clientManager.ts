@@ -24,11 +24,11 @@ export class ClientManager {
       // Log initialization mode
       if (config.gitlab?.projectId) {
         core.info(
-          `Initializing GitLab client with project ID: ${config.gitlab.projectId}`
+          `Initializing GitLab client with project ID: ${config.gitlab.projectId}`,
         )
       } else {
         core.info(
-          `Initializing GitLab client with repository: ${config.gitlab?.owner || ''}/${config.gitlab?.repo || ''}`
+          `Initializing GitLab client with repository: ${config.gitlab?.owner || ''}/${config.gitlab?.repo || ''}`,
         )
       }
 

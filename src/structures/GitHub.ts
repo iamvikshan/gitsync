@@ -10,7 +10,7 @@ import {
   ReleaseAsset,
   Tag,
   IClient,
-  BranchFilterOptions
+  BranchFilterOptions,
 } from '../../types'
 import {
   BranchHelper,
@@ -18,7 +18,7 @@ import {
   IssueHelper,
   ReleaseHelper,
   TagHelper,
-  PermsHelper
+  PermsHelper,
 } from '@/src/helpers'
 
 export class GitHubClient implements IClient {
@@ -40,25 +40,25 @@ export class GitHubClient implements IClient {
       this.octokit,
       'github',
       this.repo,
-      this.config
+      this.config,
     )
     this.pullRequest = new PullRequestHelper(
       this.octokit,
       'github',
       this.repo,
-      this.config
+      this.config,
     )
     this.issue = new IssueHelper(this.octokit, 'github', this.repo, this.config)
     this.release = new ReleaseHelper(
       this.octokit,
       'github',
       this.repo,
-      this.config
+      this.config,
     )
     this.tags = new TagHelper(this.octokit, 'github', this.repo, this.config)
     this.perms = new PermsHelper(this.octokit, 'github', this.repo, this.config)
     core.info(
-      `\x1b[32m✓ GitHub Client Initialized: ${repo.owner}/${repo.repo}\x1b[0m`
+      `\x1b[32m✓ GitHub Client Initialized: ${repo.owner}/${repo.repo}\x1b[0m`,
     )
   }
 
@@ -67,7 +67,7 @@ export class GitHubClient implements IClient {
     return {
       ...this.repo,
       description,
-      url: `https://github.com/${this.repo.owner}/${this.repo.repo}`
+      url: `https://github.com/${this.repo.owner}/${this.repo.repo}`,
     }
   }
 
@@ -75,7 +75,7 @@ export class GitHubClient implements IClient {
     try {
       const { data } = await this.octokit.rest.repos.get({
         owner: this.repo.owner,
-        repo: this.repo.repo
+        repo: this.repo.repo,
       })
       return data.description || null
     } catch {
@@ -88,7 +88,7 @@ export class GitHubClient implements IClient {
       await this.octokit.rest.repos.update({
         owner: this.repo.owner,
         repo: this.repo.repo,
-        description
+        description,
       })
     } catch {
       // Silent failure - description sync is not critical
@@ -116,7 +116,7 @@ export class GitHubClient implements IClient {
     try {
       await this.octokit.rest.git.getCommit({
         ...this.repo,
-        commit_sha: commitSha
+        commit_sha: commitSha,
       })
       return true
     } catch (error) {
@@ -124,30 +124,35 @@ export class GitHubClient implements IClient {
     }
   }
 
-  async getRecentCommits(branchName: string, limit: number): Promise<any[]> {
+  async getRecentCommits(
+    branchName: string,
+    limit: number,
+  ): Promise<unknown[]> {
     try {
       const { data: commits } = await this.octokit.rest.repos.listCommits({
         ...this.repo,
         sha: branchName,
-        per_page: limit
+        per_page: limit,
       })
       return commits
     } catch (error) {
-      throw new Error(`Failed to get recent commits: ${error}`)
+      throw new Error(`Failed to get recent commits: ${error}`, {
+        cause: error,
+      })
     }
   }
 
   async getCommitDetails(
-    commitSha: string
+    commitSha: string,
   ): Promise<{ sha: string; date: string } | null> {
     try {
       const { data: commit } = await this.octokit.rest.git.getCommit({
         ...this.repo,
-        commit_sha: commitSha
+        commit_sha: commitSha,
       })
       return {
         sha: commitSha,
-        date: commit.author.date
+        date: commit.author.date,
       }
     } catch (error) {
       core.debug(`Failed to get commit details for ${commitSha}: ${error}`)
@@ -200,7 +205,7 @@ export class GitHubClient implements IClient {
 
   async downloadReleaseAsset(
     releaseId: string,
-    asset: ReleaseAsset
+    asset: ReleaseAsset,
   ): Promise<Buffer> {
     return this.release.downloadReleaseAsset(releaseId, asset)
   }
@@ -208,7 +213,7 @@ export class GitHubClient implements IClient {
   async uploadReleaseAsset(
     releaseId: string,
     asset: ReleaseAsset,
-    content: Buffer
+    content: Buffer,
   ): Promise<void> {
     return this.release.uploadReleaseAsset(releaseId, asset, content)
   }

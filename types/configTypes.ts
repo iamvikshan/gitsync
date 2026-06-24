@@ -5,7 +5,7 @@ export const BotBranchConfigSchema = z.object({
   strategy: z
     .enum(['delete-orphaned', 'sync', 'skip'])
     .default('delete-orphaned'),
-  patterns: z.array(z.string()).default([])
+  patterns: z.array(z.string()).default([]),
 })
 
 export const BranchConfigSchema = z.object({
@@ -21,10 +21,10 @@ export const BranchConfigSchema = z.object({
       createMergeCommits: z.boolean().default(true),
       mergeMessage: z
         .string()
-        .default('Sync: Merge timeline from {source} to {target}')
+        .default('Sync: Merge timeline from {source} to {target}'),
     })
     .optional(),
-  botBranches: BotBranchConfigSchema.optional()
+  botBranches: BotBranchConfigSchema.optional(),
 })
 
 export const PRConfigSchema = z.object({
@@ -38,17 +38,17 @@ export const PRConfigSchema = z.object({
           includeAuthor: z.boolean().default(true),
           includeTimestamp: z.boolean().default(true),
           includeSourceLink: z.boolean().default(true),
-          format: z.enum(['quoted', 'inline', 'minimal']).default('quoted')
+          format: z.enum(['quoted', 'inline', 'minimal']).default('quoted'),
         })
         .default({
           includeAuthor: true,
           includeTimestamp: true,
           includeSourceLink: true,
-          format: 'quoted'
+          format: 'quoted',
         }),
       handleUpdates: z.boolean().default(true),
       preserveFormatting: z.boolean().default(true),
-      syncReplies: z.boolean().default(true)
+      syncReplies: z.boolean().default(true),
     })
     .default({
       enabled: false,
@@ -56,12 +56,12 @@ export const PRConfigSchema = z.object({
         includeAuthor: true,
         includeTimestamp: true,
         includeSourceLink: true,
-        format: 'quoted'
+        format: 'quoted',
       },
       handleUpdates: true,
       preserveFormatting: true,
-      syncReplies: true
-    })
+      syncReplies: true,
+    }),
 })
 
 export const IssueConfigSchema = z.object({
@@ -74,17 +74,17 @@ export const IssueConfigSchema = z.object({
           includeAuthor: z.boolean().default(true),
           includeTimestamp: z.boolean().default(true),
           includeSourceLink: z.boolean().default(true),
-          format: z.enum(['quoted', 'inline', 'minimal']).default('quoted')
+          format: z.enum(['quoted', 'inline', 'minimal']).default('quoted'),
         })
         .default({
           includeAuthor: true,
           includeTimestamp: true,
           includeSourceLink: true,
-          format: 'quoted'
+          format: 'quoted',
         }),
       handleUpdates: z.boolean().default(true),
       preserveFormatting: z.boolean().default(true),
-      syncReplies: z.boolean().default(true)
+      syncReplies: z.boolean().default(true),
     })
     .default({
       enabled: false,
@@ -92,12 +92,12 @@ export const IssueConfigSchema = z.object({
         includeAuthor: true,
         includeTimestamp: true,
         includeSourceLink: true,
-        format: 'quoted'
+        format: 'quoted',
       },
       handleUpdates: true,
       preserveFormatting: true,
-      syncReplies: true
-    })
+      syncReplies: true,
+    }),
 })
 
 export const ReleaseConfigSchema = z.object({
@@ -110,7 +110,7 @@ export const ReleaseConfigSchema = z.object({
     .default('point-to-latest'),
   skipPreReleases: z.boolean().default(false),
   pattern: z.string().default('*'),
-  includeAssets: z.boolean().default(true)
+  includeAssets: z.boolean().default(true),
 })
 
 export const TagConfigSchema = z.object({
@@ -118,7 +118,7 @@ export const TagConfigSchema = z.object({
   divergentCommitStrategy: z
     .enum(['skip', 'create-anyway', 'point-to-latest'])
     .default('skip'),
-  pattern: z.string().default('*')
+  pattern: z.string().default('*'),
 })
 
 export const SyncConfigSchema = z.object({
@@ -126,7 +126,7 @@ export const SyncConfigSchema = z.object({
   pullRequests: PRConfigSchema,
   issues: IssueConfigSchema,
   releases: ReleaseConfigSchema,
-  tags: TagConfigSchema
+  tags: TagConfigSchema,
 })
 
 export const GitlabConfigSchema = z.object({
@@ -136,7 +136,7 @@ export const GitlabConfigSchema = z.object({
   token: z.string().optional(),
   owner: z.string().optional(),
   repo: z.string().optional(),
-  sync: SyncConfigSchema.optional()
+  sync: SyncConfigSchema.optional(),
 })
 
 export const GithubConfigSchema = z.object({
@@ -144,12 +144,12 @@ export const GithubConfigSchema = z.object({
   token: z.string().optional(),
   owner: z.string().optional(),
   repo: z.string().optional(),
-  sync: SyncConfigSchema.optional()
+  sync: SyncConfigSchema.optional(),
 })
 
 export const ConfigSchema = z.object({
   gitlab: GitlabConfigSchema,
-  github: GithubConfigSchema
+  github: GithubConfigSchema,
 })
 
 export type BranchConfig = z.infer<typeof BranchConfigSchema>

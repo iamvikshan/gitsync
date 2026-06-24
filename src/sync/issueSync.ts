@@ -12,19 +12,19 @@ function arraysEqual(a: string[], b: string[]): boolean {
 
 export function compareIssues(
   sourceIssues: Issue[],
-  targetIssues: Issue[]
+  targetIssues: Issue[],
 ): IssueComparison[] {
   const comparisons: IssueComparison[] = []
 
   for (const sourceIssue of sourceIssues) {
     const targetIssue = targetIssues.find(
-      target => target.title === sourceIssue.title
+      target => target.title === sourceIssue.title,
     )
 
     if (!targetIssue) {
       comparisons.push({
         sourceIssue,
-        action: 'create'
+        action: 'create',
       })
       core.info(`Will create: "${sourceIssue.title}" (${sourceIssue.state})`)
       continue
@@ -33,21 +33,21 @@ export function compareIssues(
     if (
       sourceIssue.body !== targetIssue.body ||
       sourceIssue.state !== targetIssue.state ||
-      !arraysEqual(sourceIssue.labels.sort(), targetIssue.labels.sort())
+      !arraysEqual(sourceIssue.labels.toSorted(), targetIssue.labels.toSorted())
     ) {
       comparisons.push({
         sourceIssue,
         targetIssue,
-        action: 'update'
+        action: 'update',
       })
       core.info(
-        `Will update: "${sourceIssue.title}" (${targetIssue.state} → ${sourceIssue.state})`
+        `Will update: "${sourceIssue.title}" (${targetIssue.state} → ${sourceIssue.state})`,
       )
     } else {
       comparisons.push({
         sourceIssue,
         targetIssue,
-        action: 'skip'
+        action: 'skip',
       })
       core.info(`Will skip: "${sourceIssue.title}" (already in sync)`)
     }
@@ -58,7 +58,7 @@ export function compareIssues(
 
 export async function prepareSourceLink(
   sourceClient: GitHubClient | GitLabClient,
-  sourceIssue: Issue
+  sourceIssue: Issue,
 ): Promise<string> {
   const repoInfo = await sourceClient.getRepoInfo()
   const platform = sourceClient instanceof GitHubClient ? 'GitHub' : 'GitLab'
@@ -77,7 +77,7 @@ export async function prepareSourceLink(
 
 export async function syncIssues(
   source: GitHubClient | GitLabClient,
-  target: GitHubClient | GitLabClient
+  target: GitHubClient | GitLabClient,
 ): Promise<void> {
   try {
     // Fetch issues from both repositories
@@ -111,15 +111,15 @@ export async function syncIssues(
             // Add a link to the original source issue in the body
             const sourceLink = await prepareSourceLink(
               source,
-              comparison.sourceIssue
+              comparison.sourceIssue,
             )
             const issueToCreate = {
               ...comparison.sourceIssue,
-              body: `${comparison.sourceIssue.body || ''}\n\n${sourceLink}`
+              body: `${comparison.sourceIssue.body || ''}\n\n${sourceLink}`,
             }
             await createIssue(target, {
               sourceIssue: issueToCreate,
-              action: 'create'
+              action: 'create',
             })
 
             // Sync comments if enabled
@@ -131,7 +131,7 @@ export async function syncIssues(
                 source,
                 target,
                 comparison.sourceIssue,
-                issueToCreate
+                issueToCreate,
               )
             }
             break
@@ -141,15 +141,15 @@ export async function syncIssues(
             // Add source link to updated issues as well
             const sourceLink = await prepareSourceLink(
               source,
-              comparison.sourceIssue
+              comparison.sourceIssue,
             )
             const issueToUpdate = {
               ...comparison.sourceIssue,
-              body: `${comparison.sourceIssue.body || ''}\n\n${sourceLink}`
+              body: `${comparison.sourceIssue.body || ''}\n\n${sourceLink}`,
             }
             await updateIssue(target, {
               ...comparison,
-              sourceIssue: issueToUpdate
+              sourceIssue: issueToUpdate,
             })
 
             // Sync comments if enabled
@@ -161,13 +161,13 @@ export async function syncIssues(
                 source,
                 target,
                 comparison.sourceIssue,
-                issueToUpdate
+                issueToUpdate,
               )
             }
             break
           case 'skip':
             core.debug(
-              `⏭️ Skipping "${comparison.sourceIssue.title}" - already in sync`
+              `⏭️ Skipping "${comparison.sourceIssue.title}" - already in sync`,
             )
             break
         }
@@ -175,7 +175,7 @@ export async function syncIssues(
         core.warning(
           `Failed to process issue "${comparison.sourceIssue.title}": ${
             error instanceof Error ? error.message : String(error)
-          }`
+          }`,
         )
       }
     }
@@ -187,7 +187,7 @@ export async function syncIssues(
     core.error(
       `Issue synchronization failed: ${
         error instanceof Error ? error.message : String(error)
-      }`
+      }`,
     )
     throw error
   }
@@ -195,18 +195,18 @@ export async function syncIssues(
 
 async function createIssue(
   target: GitHubClient | GitLabClient,
-  comparison: IssueComparison
+  comparison: IssueComparison,
 ): Promise<void> {
   // Pass the full issue object including the state
   await target.createIssue({
     ...comparison.sourceIssue,
-    state: comparison.sourceIssue.state // Explicitly include state
+    state: comparison.sourceIssue.state, // Explicitly include state
   })
 }
 
 async function updateIssue(
   target: GitHubClient | GitLabClient,
-  comparison: IssueComparison
+  comparison: IssueComparison,
 ): Promise<void> {
   if (!comparison.targetIssue?.number) return
 
@@ -217,16 +217,16 @@ async function updateIssue(
         title: comparison.sourceIssue.title,
         body: comparison.sourceIssue.body,
         state: comparison.sourceIssue.state,
-        labels: comparison.sourceIssue.labels
+        labels: comparison.sourceIssue.labels,
       },
       null,
-      2
-    )
+      2,
+    ),
   )
 
   await target.updateIssue(
     comparison.targetIssue.number,
-    comparison.sourceIssue
+    comparison.sourceIssue,
   )
 }
 
@@ -237,7 +237,7 @@ async function syncIssueComments(
   source: GitHubClient | GitLabClient,
   target: GitHubClient | GitLabClient,
   sourceIssue: Issue,
-  targetIssue: Issue
+  targetIssue: Issue,
 ): Promise<void> {
   if (!sourceIssue.comments || !targetIssue.number) {
     return
@@ -250,21 +250,21 @@ async function syncIssueComments(
   }
 
   core.info(
-    `💬 Syncing ${sourceIssue.comments.length} comments for issue "${sourceIssue.title}"`
+    `💬 Syncing ${sourceIssue.comments.length} comments for issue "${sourceIssue.title}"`,
   )
 
   try {
     // Fetch existing comments on target issue to avoid duplicates
     const existingComments = await getExistingTargetComments(
       target,
-      targetIssue.number
+      targetIssue.number,
     )
 
     for (const sourceComment of sourceIssue.comments) {
       // Skip if comment is already synced
       const existingComment = findExistingComment(
         sourceComment,
-        existingComments
+        existingComments,
       )
 
       if (existingComment) {
@@ -277,13 +277,13 @@ async function syncIssueComments(
             sourceComment,
             source,
             sourceIssue.number!,
-            commentSyncOptions
+            commentSyncOptions,
           )
           await updateTargetComment(
             target,
             targetIssue.number,
             existingComment.id!,
-            formattedComment
+            formattedComment,
           )
           core.info(`🔄 Updated comment by @${sourceComment.author}`)
         }
@@ -293,7 +293,7 @@ async function syncIssueComments(
           sourceComment,
           source,
           sourceIssue.number!,
-          commentSyncOptions
+          commentSyncOptions,
         )
         await createTargetComment(target, targetIssue.number, formattedComment)
         core.info(`💬 Created comment by @${sourceComment.author}`)
@@ -303,7 +303,7 @@ async function syncIssueComments(
     core.warning(
       `Failed to sync comments for issue "${sourceIssue.title}": ${
         error instanceof Error ? error.message : String(error)
-      }`
+      }`,
     )
   }
 }
@@ -313,7 +313,7 @@ async function syncIssueComments(
  */
 async function getExistingTargetComments(
   target: GitHubClient | GitLabClient,
-  issueNumber: number
+  issueNumber: number,
 ): Promise<Comment[]> {
   if (target instanceof GitHubClient) {
     return await target.issue.fetchIssueComments(issueNumber)
@@ -322,7 +322,7 @@ async function getExistingTargetComments(
     // Since getProjectId is private, we'll use a workaround
     try {
       // Try to fetch comments directly through the issues helper
-      const projectId = await (target as any).getProjectId()
+      const projectId = await (target as unknown).getProjectId()
       return await target.issues.fetchIssueComments(issueNumber, projectId)
     } catch (error) {
       core.warning(`Failed to fetch existing comments: ${error}`)
@@ -336,7 +336,7 @@ async function getExistingTargetComments(
  */
 function findExistingComment(
   sourceComment: Comment,
-  existingComments: Comment[]
+  existingComments: Comment[],
 ): Comment | undefined {
   return existingComments.find(comment => {
     // Check if this is a synced comment from the same source
@@ -345,7 +345,7 @@ function findExistingComment(
     }
 
     const originalCommentId = CommentFormatter.extractOriginalCommentId(
-      comment.body
+      comment.body,
     )
     return originalCommentId === sourceComment.id
   })
@@ -357,7 +357,7 @@ function findExistingComment(
 async function createTargetComment(
   target: GitHubClient | GitLabClient,
   issueNumber: number,
-  body: string
+  body: string,
 ): Promise<void> {
   if (target instanceof GitHubClient) {
     await target.issue.createIssueComment(issueNumber, body)
@@ -373,7 +373,7 @@ async function updateTargetComment(
   target: GitHubClient | GitLabClient,
   issueNumber: number,
   commentId: number,
-  body: string
+  body: string,
 ): Promise<void> {
   if (target instanceof GitHubClient) {
     await target.issue.updateIssueComment(commentId, body)

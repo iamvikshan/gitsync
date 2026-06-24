@@ -32,7 +32,7 @@ function getBotBranchConfig(config: Config): {
     patterns:
       botConfig?.patterns && botConfig.patterns.length > 0
         ? botConfig.patterns
-        : botDefaults
+        : botDefaults,
   }
 }
 
@@ -73,14 +73,14 @@ function shouldSkipBranchCreation(branchName: string, config: Config): boolean {
  */
 function shouldUpdateBranch(
   sourceBranch: Branch,
-  targetBranch: Branch
+  targetBranch: Branch,
 ): { update: boolean; reason: string } {
   // If we don't have timestamp information, fall back to SHA comparison
   if (!sourceBranch.lastCommitDate || !targetBranch.lastCommitDate) {
     return {
       update: true,
       reason:
-        'No timestamp information available, updating based on SHA difference'
+        'No timestamp information available, updating based on SHA difference',
     }
   }
 
@@ -92,19 +92,19 @@ function shouldUpdateBranch(
     const timeDiff = Math.round((sourceDate - targetDate) / 1000 / 60) // minutes
     return {
       update: true,
-      reason: `Source commit is ${timeDiff} minutes newer`
+      reason: `Source commit is ${timeDiff} minutes newer`,
     }
   } else if (sourceDate < targetDate) {
     const timeDiff = Math.round((targetDate - sourceDate) / 1000 / 60) // minutes
     return {
       update: false,
-      reason: `Target commit is ${timeDiff} minutes newer, skipping to prevent reversion`
+      reason: `Target commit is ${timeDiff} minutes newer, skipping to prevent reversion`,
     }
   } else {
     return {
       update: false,
       reason:
-        'Commits have same timestamp but different SHAs, skipping to be safe'
+        'Commits have same timestamp but different SHAs, skipping to be safe',
     }
   }
 }
@@ -112,7 +112,7 @@ function shouldUpdateBranch(
 export function compareBranches(
   sourceBranches: Branch[],
   targetBranches: Branch[],
-  config: Config
+  config: Config,
 ): BranchComparison[] {
   const comparisons: BranchComparison[] = []
 
@@ -129,10 +129,10 @@ export function compareBranches(
           sourceCommitDate: sourceBranch.lastCommitDate,
           action: 'skip',
           protected: sourceBranch.protected,
-          reason: 'Branch appears to be a deleted PR/MR branch'
+          reason: 'Branch appears to be a deleted PR/MR branch',
         })
         core.debug(
-          `Branch ${sourceBranch.name} skipped - appears to be deleted PR/MR branch`
+          `Branch ${sourceBranch.name} skipped - appears to be deleted PR/MR branch`,
         )
         continue
       }
@@ -143,7 +143,7 @@ export function compareBranches(
         sourceCommitDate: sourceBranch.lastCommitDate,
         action: 'create',
         protected: sourceBranch.protected,
-        reason: 'Branch does not exist in target'
+        reason: 'Branch does not exist in target',
       })
       core.debug(`Branch ${sourceBranch.name} will be created in target`)
       continue
@@ -162,10 +162,10 @@ export function compareBranches(
           targetCommitDate: targetBranch.lastCommitDate,
           action: 'update',
           protected: sourceBranch.protected,
-          reason: shouldUpdate.reason
+          reason: shouldUpdate.reason,
         })
         core.debug(
-          `Branch ${sourceBranch.name} will be updated in target: ${shouldUpdate.reason}`
+          `Branch ${sourceBranch.name} will be updated in target: ${shouldUpdate.reason}`,
         )
       } else {
         comparisons.push({
@@ -176,10 +176,10 @@ export function compareBranches(
           targetCommitDate: targetBranch.lastCommitDate,
           action: 'skip',
           protected: sourceBranch.protected,
-          reason: shouldUpdate.reason
+          reason: shouldUpdate.reason,
         })
         core.debug(
-          `Branch ${sourceBranch.name} skipped: ${shouldUpdate.reason}`
+          `Branch ${sourceBranch.name} skipped: ${shouldUpdate.reason}`,
         )
       }
     } else {
@@ -191,7 +191,7 @@ export function compareBranches(
         targetCommitDate: targetBranch.lastCommitDate,
         action: 'skip',
         protected: sourceBranch.protected,
-        reason: 'Commits are identical'
+        reason: 'Commits are identical',
       })
       core.debug(`Branch ${sourceBranch.name} is up to date`)
     }
@@ -216,7 +216,7 @@ interface UnifiedBranch {
  */
 function createUnifiedBranchView(
   githubBranches: Branch[],
-  gitlabBranches: Branch[]
+  gitlabBranches: Branch[],
 ): UnifiedBranch[] {
   const branchMap = new Map<string, UnifiedBranch>()
 
@@ -226,7 +226,7 @@ function createUnifiedBranchView(
       name: branch.name,
       githubBranch: branch,
       existsInGithub: true,
-      existsInGitlab: false
+      existsInGitlab: false,
     })
   }
 
@@ -241,7 +241,7 @@ function createUnifiedBranchView(
         name: branch.name,
         gitlabBranch: branch,
         existsInGithub: false,
-        existsInGitlab: true
+        existsInGitlab: true,
       })
     }
   }
@@ -254,7 +254,7 @@ function createUnifiedBranchView(
  */
 function determineBidirectionalAction(
   branch: UnifiedBranch,
-  config: Config
+  config: Config,
 ): {
   branch: string
   action: 'sync-to-github' | 'sync-to-gitlab' | 'delete-from-gitlab' | 'skip'
@@ -274,7 +274,7 @@ function determineBidirectionalAction(
         action: 'skip',
         reason: 'Commits are identical',
         sourceCommit: githubBranch.sha,
-        targetCommit: gitlabBranch.sha
+        targetCommit: gitlabBranch.sha,
       }
     }
 
@@ -286,7 +286,7 @@ function determineBidirectionalAction(
         action: 'sync-to-gitlab',
         reason: `GitHub is newer: ${result.reason}`,
         sourceCommit: githubBranch.sha,
-        targetCommit: gitlabBranch.sha
+        targetCommit: gitlabBranch.sha,
       }
     }
 
@@ -297,7 +297,7 @@ function determineBidirectionalAction(
         action: 'sync-to-github',
         reason: `GitLab is newer: ${reverseResult.reason}`,
         sourceCommit: gitlabBranch.sha,
-        targetCommit: githubBranch.sha
+        targetCommit: githubBranch.sha,
       }
     }
 
@@ -306,7 +306,7 @@ function determineBidirectionalAction(
       action: 'skip',
       reason: 'Unable to determine which commit is newer',
       sourceCommit: githubBranch.sha,
-      targetCommit: gitlabBranch.sha
+      targetCommit: gitlabBranch.sha,
     }
   }
 
@@ -319,7 +319,7 @@ function determineBidirectionalAction(
         branch: branch.name,
         action: 'skip',
         reason: 'Branch appears to be a deleted PR/MR branch',
-        sourceCommit: githubBranch.sha
+        sourceCommit: githubBranch.sha,
       }
     }
 
@@ -327,7 +327,7 @@ function determineBidirectionalAction(
       branch: branch.name,
       action: 'sync-to-gitlab',
       reason: 'Branch only exists in GitHub',
-      sourceCommit: githubBranch.sha
+      sourceCommit: githubBranch.sha,
     }
   }
 
@@ -344,7 +344,7 @@ function determineBidirectionalAction(
           branch: branch.name,
           action: 'delete-from-gitlab',
           reason: 'Bot branch exists only in GitLab, deleting orphaned branch',
-          sourceCommit: gitlabBranch.sha
+          sourceCommit: gitlabBranch.sha,
         }
       } else if (strategy === 'skip') {
         return {
@@ -352,7 +352,7 @@ function determineBidirectionalAction(
           action: 'skip',
           reason:
             'Bot branch exists only in GitLab, skipping per configuration',
-          sourceCommit: gitlabBranch.sha
+          sourceCommit: gitlabBranch.sha,
         }
       }
       // If strategy is 'sync', fall through to sync logic below
@@ -363,7 +363,7 @@ function determineBidirectionalAction(
       branch: branch.name,
       action: 'sync-to-github',
       reason: 'Branch only exists in GitLab',
-      sourceCommit: gitlabBranch.sha
+      sourceCommit: gitlabBranch.sha,
     }
   }
 
@@ -372,7 +372,7 @@ function determineBidirectionalAction(
     branch: branch.name,
     action: 'skip',
     reason: 'Branch exists in neither repository (unexpected)',
-    sourceCommit: ''
+    sourceCommit: '',
   }
 }
 
@@ -386,12 +386,12 @@ function logBidirectionalSyncPlan(
     reason: string
     sourceCommit: string
     targetCommit?: string
-  }>
+  }>,
 ): void {
   const toGithub = syncActions.filter(a => a.action === 'sync-to-github').length
   const toGitlab = syncActions.filter(a => a.action === 'sync-to-gitlab').length
   const deleteFromGitlab = syncActions.filter(
-    a => a.action === 'delete-from-gitlab'
+    a => a.action === 'delete-from-gitlab',
   ).length
   const skipped = syncActions.filter(a => a.action === 'skip').length
 
@@ -437,7 +437,7 @@ async function executeBidirectionalSync(
     targetCommit?: string
   }>,
   githubClient: GitHubClient,
-  gitlabClient: GitLabClient
+  gitlabClient: GitLabClient,
 ): Promise<void> {
   const actionsToProcess = syncActions.filter(a => a.action !== 'skip')
 
@@ -480,25 +480,25 @@ async function executeBidirectionalSync(
           return {
             branch: action.branch,
             status: 'failed',
-            error: errorMessage
+            error: errorMessage,
           }
         }
-      })
+      }),
     )
 
     // Log batch results
     const successful = batchResults.filter(
-      r => r.status === 'fulfilled' && r.value.status === 'success'
+      r => r.status === 'fulfilled' && r.value.status === 'success',
     )
     const failed = batchResults.filter(
       r =>
         r.status === 'rejected' ||
-        (r.status === 'fulfilled' && r.value.status === 'failed')
+        (r.status === 'fulfilled' && r.value.status === 'failed'),
     )
 
     if (successful.length > 0) {
       core.info(
-        `✓ Batch completed: ${successful.length} branches synced successfully`
+        `✓ Batch completed: ${successful.length} branches synced successfully`,
       )
     }
     if (failed.length > 0) {
@@ -515,7 +515,7 @@ async function executeBidirectionalSync(
  */
 export async function syncBranchesBidirectional(
   githubClient: GitHubClient,
-  gitlabClient: GitLabClient
+  gitlabClient: GitLabClient,
 ): Promise<void> {
   const config = githubClient.config // Use GitHub client's config
   core.info('🔄 Starting intelligent bidirectional branch sync...')
@@ -524,22 +524,22 @@ export async function syncBranchesBidirectional(
   const [githubBranches, gitlabBranches] = await Promise.all([
     githubClient.fetchBranches({
       includeProtected: githubClient.config.github.sync?.branches.protected,
-      pattern: githubClient.config.github.sync?.branches.pattern
+      pattern: githubClient.config.github.sync?.branches.pattern,
     }),
     gitlabClient.fetchBranches({
       includeProtected: gitlabClient.config.gitlab.sync?.branches.protected,
-      pattern: gitlabClient.config.gitlab.sync?.branches.pattern
-    })
+      pattern: gitlabClient.config.gitlab.sync?.branches.pattern,
+    }),
   ])
 
   // Create a unified view of all branches with their latest state
   const unifiedBranches = createUnifiedBranchView(
     githubBranches,
-    gitlabBranches
+    gitlabBranches,
   )
 
   core.info(
-    `🔍 Unified Branch Analysis: ${unifiedBranches.length} unique branches found`
+    `🔍 Unified Branch Analysis: ${unifiedBranches.length} unique branches found`,
   )
 
   // Process each branch with intelligent sync logic
@@ -567,13 +567,13 @@ export async function syncBranchesBidirectional(
 
 export async function syncBranches(
   source: GitHubClient | GitLabClient,
-  target: GitHubClient | GitLabClient
+  target: GitHubClient | GitLabClient,
 ): Promise<void> {
   const config = source.config // Use source client's config
   // Fetch branches from both repositories
   const sourceBranches = await source.fetchBranches({
     includeProtected: source.config.github.sync?.branches.protected,
-    pattern: source.config.github.sync?.branches.pattern
+    pattern: source.config.github.sync?.branches.pattern,
   })
 
   const targetBranches = await target.fetchBranches()
@@ -582,7 +582,7 @@ export async function syncBranches(
   const branchComparisons = compareBranches(
     sourceBranches,
     targetBranches,
-    config
+    config,
   )
 
   // Log sync plan with enhanced details
@@ -618,7 +618,7 @@ export async function syncBranches(
               return {
                 name: comparison.name,
                 action: 'create',
-                status: 'success'
+                status: 'success',
               }
             case 'update':
               core.info(`🔄 Updating: ${comparison.name}`)
@@ -626,49 +626,49 @@ export async function syncBranches(
               return {
                 name: comparison.name,
                 action: 'update',
-                status: 'success'
+                status: 'success',
               }
             default:
               return {
                 name: comparison.name,
                 action: comparison.action,
-                status: 'skipped'
+                status: 'skipped',
               }
           }
         } catch (error) {
           const errorMessage =
             error instanceof Error ? error.message : String(error)
           core.warning(
-            `Failed to ${comparison.action} branch ${comparison.name}: ${errorMessage}`
+            `Failed to ${comparison.action} branch ${comparison.name}: ${errorMessage}`,
           )
           return {
             name: comparison.name,
             action: comparison.action,
             status: 'failed',
-            error: errorMessage
+            error: errorMessage,
           }
         }
-      })
+      }),
     )
 
     // Log batch results
     const successful = batchResults.filter(
-      r => r.status === 'fulfilled' && r.value.status === 'success'
+      r => r.status === 'fulfilled' && r.value.status === 'success',
     )
     const failed = batchResults.filter(
       r =>
         r.status === 'rejected' ||
-        (r.status === 'fulfilled' && r.value.status === 'failed')
+        (r.status === 'fulfilled' && r.value.status === 'failed'),
     )
 
     if (successful.length > 0) {
       core.info(
-        `✓ Batch completed: ${successful.length} branches processed successfully`
+        `✓ Batch completed: ${successful.length} branches processed successfully`,
       )
     }
     if (failed.length > 0) {
       core.warning(
-        `⚠️ Batch issues: ${failed.length} branches failed to process`
+        `⚠️ Batch issues: ${failed.length} branches failed to process`,
       )
     }
   }
@@ -679,7 +679,7 @@ export async function syncBranches(
 
 async function createBranch(
   target: GitHubClient | GitLabClient,
-  comparison: BranchComparison
+  comparison: BranchComparison,
 ): Promise<void> {
   core.info(`🌱 Creating branch ${comparison.name}`)
   // Implementation will be handled by the specific client (GitHub/GitLab)
@@ -689,7 +689,7 @@ async function createBranch(
 
 async function updateBranch(
   target: GitHubClient | GitLabClient,
-  comparison: BranchComparison
+  comparison: BranchComparison,
 ): Promise<void> {
   core.info(`📝 Updating branch ${comparison.name}`)
   // Implementation will be handled by the specific client (GitHub/GitLab)
@@ -727,11 +727,11 @@ function logSyncPlan(comparisons: BranchComparison[]): void {
         : 'N/A'
       core.info(`${comparison.action.toUpperCase()}: ${comparison.name}`)
       core.info(
-        `  Source: ${comparison.sourceCommit.substring(0, 8)} (${sourceDate})`
+        `  Source: ${comparison.sourceCommit.substring(0, 8)} (${sourceDate})`,
       )
       if (comparison.targetCommit) {
         core.info(
-          `  Target: ${comparison.targetCommit.substring(0, 8)} (${targetDate})`
+          `  Target: ${comparison.targetCommit.substring(0, 8)} (${targetDate})`,
         )
       }
       core.info(`  Reason: ${comparison.reason}`)

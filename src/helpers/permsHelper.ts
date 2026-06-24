@@ -17,7 +17,7 @@ export class PermsHelper {
     private platform: PlatformType,
     private repo: Repository,
     private config: Config,
-    private getProjectId?: () => Promise<number>
+    private getProjectId?: () => Promise<number>,
   ) {
     this.repoCreator = new RepoHelper(this.client, this.platform, this.repo)
   }
@@ -37,18 +37,18 @@ export class PermsHelper {
         {
           feature: 'issues',
           check: () => octokit.rest.issues.listForRepo({ ...this.repo }),
-          warningMessage: `${ErrorCodes.EPERM2}: Issues read/write permissions missing`
+          warningMessage: `${ErrorCodes.EPERM2}: Issues read/write permissions missing`,
         },
         {
           feature: 'pullRequests',
           check: () => octokit.rest.pulls.list({ ...this.repo }),
-          warningMessage: `${ErrorCodes.EPERM3}: Pull requests read/write permissions missing`
+          warningMessage: `${ErrorCodes.EPERM3}: Pull requests read/write permissions missing`,
         },
         {
           feature: 'releases',
           check: () => octokit.rest.repos.listReleases({ ...this.repo }),
-          warningMessage: `${ErrorCodes.EPERM4}: Releases read/write permissions missing`
-        }
+          warningMessage: `${ErrorCodes.EPERM4}: Releases read/write permissions missing`,
+        },
       ]
 
       await this.repoCreator.createIfNotExists()
@@ -58,13 +58,14 @@ export class PermsHelper {
         'github',
         permissionChecks,
         this.config.github.sync,
-        `${this.repo.owner}/${this.repo.repo}`
+        `${this.repo.owner}/${this.repo.repo}`,
       )
 
       core.info('\x1b[32m✓ Repository Access Verified\x1b[0m')
     } catch (error) {
       throw new Error(
-        `${ErrorCodes.EGHUB}: ${error instanceof Error ? error.message : String(error)}`
+        `${ErrorCodes.EGHUB}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -76,7 +77,7 @@ export class PermsHelper {
 
       const projectId = await this.getProjectId!()
       core.info(
-        `\x1b[32m✓ Validating access using Project ID: ${projectId}\x1b[0m`
+        `\x1b[32m✓ Validating access using Project ID: ${projectId}\x1b[0m`,
       )
 
       const permissionChecks: PermissionCheck[] = [
@@ -86,7 +87,7 @@ export class PermsHelper {
             const issues = await gitlab.Issues.all({ projectId })
             return Array.isArray(issues)
           },
-          warningMessage: `${ErrorCodes.EPERM2}: Issues read/write permissions missing`
+          warningMessage: `${ErrorCodes.EPERM2}: Issues read/write permissions missing`,
         },
         {
           feature: 'mergeRequests',
@@ -94,7 +95,7 @@ export class PermsHelper {
             const mrs = await gitlab.MergeRequests.all({ projectId })
             return Array.isArray(mrs)
           },
-          warningMessage: `${ErrorCodes.EPERM3}: Merge requests read/write permissions missing`
+          warningMessage: `${ErrorCodes.EPERM3}: Merge requests read/write permissions missing`,
         },
         {
           feature: 'releases',
@@ -102,24 +103,25 @@ export class PermsHelper {
             const releases = await gitlab.ProjectReleases.all(projectId)
             return Array.isArray(releases)
           },
-          warningMessage: `${ErrorCodes.EPERM4}: Releases read/write permissions missing`
-        }
+          warningMessage: `${ErrorCodes.EPERM4}: Releases read/write permissions missing`,
+        },
       ]
 
       await PermissionValidator.validatePlatformPermissions(
         'gitlab',
         permissionChecks,
         this.config.gitlab.sync,
-        `${this.repo.owner}/${this.repo.repo}`
+        `${this.repo.owner}/${this.repo.repo}`,
       )
 
       core.info(
-        `\x1b[32m✓ GitLab Project Access Verified: ${this.repo.owner}/${this.repo.repo}; Project ID: ${projectId}\x1b[0m`
+        `\x1b[32m✓ GitLab Project Access Verified: ${this.repo.owner}/${this.repo.repo}; Project ID: ${projectId}\x1b[0m`,
       )
     } catch (error) {
       core.error('GitLab access validation failed')
       throw new Error(
-        `${ErrorCodes.EGLAB}: ${error instanceof Error ? error.message : String(error)}`
+        `${ErrorCodes.EGLAB}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }

@@ -1,7 +1,7 @@
 # Token Setup Guide
 
-This guide explains how to create and configure the required tokens for the GitHub GitLab Sync
-Action.
+This guide explains how to create and configure the required tokens for the
+GitHub GitLab Sync Action.
 
 ## Required Tokens
 
@@ -28,7 +28,8 @@ The GitLab token is required for syncing to/from GitLab repositories.
 
 4. **Create and Copy Token**
    - Click **Create personal access token**
-   - **Important**: Copy the token immediately - you won't be able to see it again!
+   - **Important**: Copy the token immediately - you won't be able to see it
+     again!
 
 #### Required Permissions
 
@@ -38,12 +39,14 @@ The GitLab token is required for syncing to/from GitLab repositories.
 | `read_repository`  | Read repository content  | ✅ Yes   | ✅ Yes       |
 | `write_repository` | Write repository content | ✅ Yes   | ✅ Yes       |
 
-> **💬 Comment Synchronization**: The `api` scope includes access to issue notes (comments). The
-> existing permissions are sufficient for comment synchronization.
+> **💬 Comment Synchronization**: The `api` scope includes access to issue notes
+> (comments). The existing permissions are sufficient for comment
+> synchronization.
 
 ### GitHub Token (Optional)
 
-The GitHub token is optional - the action will use the default `GITHUB_TOKEN` if not provided.
+The GitHub token is optional - the action will use the default `GITHUB_TOKEN` if
+not provided.
 
 #### When You Need a Custom GitHub Token
 
@@ -79,8 +82,8 @@ The GitHub token is optional - the action will use the default `GITHUB_TOKEN` if
 | `repo`     | Full repository access | ✅ Yes   | ✅ Yes       |
 | `workflow` | Workflow access        | Optional | No           |
 
-> **💬 Comment Synchronization**: The `repo` scope includes access to issue and PR comments. No
-> additional permissions are needed for comment synchronization.
+> **💬 Comment Synchronization**: The `repo` scope includes access to issue and
+> PR comments. No additional permissions are needed for comment synchronization.
 
 ## Adding Tokens to GitHub Secrets
 
@@ -124,7 +127,8 @@ The GitHub token is optional - the action will use the default `GITHUB_TOKEN` if
 
 ## Token Validation
 
-The action will validate your tokens on startup and provide clear error messages if:
+The action will validate your tokens on startup and provide clear error messages
+if:
 
 - Token is missing or invalid
 - Token lacks required permissions

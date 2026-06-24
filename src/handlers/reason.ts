@@ -36,14 +36,14 @@ function reasonBoolean(value: unknown): {
     if (containsAllLetters(str, 'true')) {
       return {
         value: true,
-        suggestion: `Did you mean 'true'? Found "${value}" which contains all letters of "true"`
+        suggestion: `Did you mean 'true'? Found "${value}" which contains all letters of "true"`,
       }
     }
 
     if (containsAllLetters(str, 'false')) {
       return {
         value: false,
-        suggestion: `Did you mean 'false'? Found "${value}" which contains all letters of "false"`
+        suggestion: `Did you mean 'false'? Found "${value}" which contains all letters of "false"`,
       }
     }
   }
@@ -51,13 +51,13 @@ function reasonBoolean(value: unknown): {
   // Default to false for any other values
   return {
     value: false,
-    suggestion: `Invalid boolean value "${value}", defaulting to false`
+    suggestion: `Invalid boolean value "${value}", defaulting to false`,
   }
 }
 
 // Process boolean values with reasoning
 export function processConfig(
-  obj: Record<string, unknown>
+  obj: Record<string, unknown>,
 ): Record<string, unknown> {
   if (!obj || typeof obj !== 'object') return obj
 
@@ -72,7 +72,7 @@ export function processConfig(
         'enabled',
         'protected',
         'autoMerge',
-        'syncComments'
+        'syncComments',
       ].includes(key)
 
       if (isExpectedBoolean) {

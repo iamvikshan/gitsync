@@ -1,28 +1,33 @@
 {
   "compilerOptions": {
-    "target": "es2020",
-    "module": "commonjs",
-    "lib": ["es2020"],
-    "moduleResolution": "node",
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext"],
+    "moduleResolution": "bundler",
+    "types": ["@types/bun", "@types/node"],
     "strict": true,
-    "sourceMap": false,
-    "declaration": false,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowJs": true,
+    "checkJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
+    "isolatedModules": true,
+    "noEmit": true,
     "paths": {
       "@/*": ["./*"],
       "@src/*": ["./src/*"],
       "@utils/*": ["./src/utils/*"],
       "@handlers/*": ["./src/handlers/*"],
       "@types/*": ["./types/*"]
-    },
-    "typeRoots": ["node_modules/@types", "@types"]
+    }
   },
-  "include": ["src/**/*", "tests/**/*", "types"],
-  "exclude": ["node_modules", "dist", "coverage", "**/*.d.ts"]
+  "include": ["src/**/*", "tests/**/*", "types/**/*"],
+  "exclude": ["node_modules", "coverage"]
 }

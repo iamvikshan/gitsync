@@ -13,7 +13,7 @@ export class PullRequestHelper {
     private platform: PlatformType,
     private repo: Repository,
     private config: Config,
-    private getProjectId?: () => Promise<number>
+    private getProjectId?: () => Promise<number>,
   ) {}
 
   async syncPullRequests(): Promise<PullRequest[]> {
@@ -35,19 +35,19 @@ export class PullRequestHelper {
 
       const { data: prs } = await octokit.rest.pulls.list({
         ...this.repo,
-        state: 'all'
+        state: 'all',
       })
 
       const processedPRs = await Promise.all(
-        prs.map(async (pr: any) => {
+        prs.map(async (pr: unknown) => {
           const { data: comments } = await octokit.rest.issues.listComments({
             ...this.repo,
-            issue_number: pr.number
+            issue_number: pr.number,
           })
 
           const { data: reviews } = await octokit.rest.pulls.listReviews({
             ...this.repo,
-            pull_number: pr.number
+            pull_number: pr.number,
           })
 
           return {
@@ -57,20 +57,20 @@ export class PullRequestHelper {
             description: pr.body || '',
             sourceBranch: pr.head.ref,
             targetBranch: pr.base.ref,
-            labels: pr.labels.map((label: any) => label.name),
+            labels: pr.labels.map((label: unknown) => label.name),
             state: pr.merged_at
               ? 'merged'
               : (pr.state as 'open' | 'closed' | 'merged'),
             comments: comments.map(
-              (comment: any): Comment => ({
+              (comment: unknown): Comment => ({
                 id: comment.id,
                 body: comment.body || '',
                 author: comment.user?.login || '',
-                createdAt: comment.created_at
-              })
+                createdAt: comment.created_at,
+              }),
             ),
             reviews: reviews.map(
-              (review: any): Review => ({
+              (review: unknown): Review => ({
                 id: review.id,
                 state: review.state.toLowerCase() as
                   | 'approved'
@@ -78,20 +78,20 @@ export class PullRequestHelper {
                   | 'commented',
                 body: review.body || '',
                 author: review.user?.login || '',
-                createdAt: review.submitted_at || ''
-              })
-            )
+                createdAt: review.submitted_at || '',
+              }),
+            ),
           }
-        })
+        }),
       )
 
       core.info(
-        `\x1b[32m✓ Pull Requests Fetched: ${processedPRs.length} PRs\x1b[0m`
+        `\x1b[32m✓ Pull Requests Fetched: ${processedPRs.length} PRs\x1b[0m`,
       )
       return processedPRs
     } catch (error) {
       core.warning(
-        `\x1b[31m❌ Failed to Fetch GitHub Pull Requests: ${error instanceof Error ? error.message : String(error)}\x1b[0m`
+        `\x1b[31m❌ Failed to Fetch GitHub Pull Requests: ${error instanceof Error ? error.message : String(error)}\x1b[0m`,
       )
       return []
     }
@@ -109,7 +109,7 @@ export class PullRequestHelper {
       const projectId = await this.getProjectId!()
       const mrs = await gitlab.MergeRequests.all({
         projectId,
-        scope: 'all'
+        scope: 'all',
       })
 
       const processedPRs = await Promise.all(
@@ -126,7 +126,7 @@ export class PullRequestHelper {
           }) => {
             const comments = await gitlab.MergeRequestNotes.all(
               projectId,
-              mr.iid
+              mr.iid,
             )
 
             return {
@@ -137,32 +137,33 @@ export class PullRequestHelper {
               sourceBranch: mr.source_branch,
               targetBranch: mr.target_branch,
               labels: LabelHelper.combineLabels(mr.labels, 'gitlab'),
-              state: (mr.state === 'merged'
-                ? 'merged'
-                : mr.state === 'opened'
-                  ? 'open'
-                  : 'closed') as 'merged' | 'open' | 'closed',
+              state:
+                mr.state === 'merged'
+                  ? 'merged'
+                  : mr.state === 'opened'
+                    ? 'open'
+                    : 'closed',
               comments: comments.map(
-                (comment: any): Comment => ({
+                (comment: unknown): Comment => ({
                   id: comment.id,
                   body: comment.body || '',
                   author:
                     comment.author?.username || comment.author?.name || '',
-                  createdAt: comment.created_at
-                })
-              )
+                  createdAt: comment.created_at,
+                }),
+              ),
             }
-          }
-        )
+          },
+        ),
       )
 
       core.info(
-        `\x1b[32m✓ Merge Requests Fetched: ${processedPRs.length} MRs\x1b[0m`
+        `\x1b[32m✓ Merge Requests Fetched: ${processedPRs.length} MRs\x1b[0m`,
       )
       return processedPRs
     } catch (error) {
       core.warning(
-        `\x1b[31m❌ Failed to Fetch GitLab Merge Requests: ${error instanceof Error ? error.message : String(error)}\x1b[0m`
+        `\x1b[31m❌ Failed to Fetch GitLab Merge Requests: ${error instanceof Error ? error.message : String(error)}\x1b[0m`,
       )
       return []
     }
@@ -184,7 +185,7 @@ export class PullRequestHelper {
         title: pr.title,
         body: pr.description,
         head: pr.sourceBranch,
-        base: pr.targetBranch
+        base: pr.targetBranch,
       })
 
       const normalizedLabels = LabelHelper.combineLabels(pr.labels, 'github')
@@ -193,7 +194,7 @@ export class PullRequestHelper {
         await octokit.rest.issues.addLabels({
           ...this.repo,
           issue_number: newPR.number,
-          labels: normalizedLabels
+          labels: normalizedLabels,
         })
       }
 
@@ -202,13 +203,14 @@ export class PullRequestHelper {
           await octokit.rest.issues.createComment({
             ...this.repo,
             issue_number: newPR.number,
-            body: comment.body
+            body: comment.body,
           })
         }
       }
     } catch (error) {
       throw new Error(
-        `Failed to create PR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create PR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -226,17 +228,17 @@ export class PullRequestHelper {
         pr.title,
         {
           description: pr.description,
-          labels: LabelHelper.formatForGitLab(normalizedLabels)
-        }
+          labels: LabelHelper.formatForGitLab(normalizedLabels),
+        },
       )
 
       if (pr.state === 'merged') {
         await gitlab.MergeRequests.accept(projectId, mr.iid, {
-          shouldRemoveSourceBranch: true
+          shouldRemoveSourceBranch: true,
         })
       } else if (pr.state === 'closed') {
         await gitlab.MergeRequests.edit(projectId, mr.iid, {
-          stateEvent: 'close'
+          stateEvent: 'close',
         })
       }
 
@@ -247,7 +249,8 @@ export class PullRequestHelper {
       }
     } catch (error) {
       throw new Error(
-        `Failed to create MR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to create MR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -262,20 +265,20 @@ export class PullRequestHelper {
 
   private async updateGitHubPullRequest(
     number: number,
-    pr: PullRequest
+    pr: PullRequest,
   ): Promise<void> {
     try {
       const octokit = this.client as InstanceType<typeof GitHub>
       const { data: currentPR } = await octokit.rest.pulls.get({
         ...this.repo,
-        pull_number: number
+        pull_number: number,
       })
 
-      const updatePayload: any = {
+      const updatePayload: unknown = {
         ...this.repo,
         pull_number: number,
         title: pr.title,
-        body: pr.description
+        body: pr.description,
       }
 
       if (!currentPR.merged_at) {
@@ -293,18 +296,19 @@ export class PullRequestHelper {
       await octokit.rest.issues.setLabels({
         ...this.repo,
         issue_number: number,
-        labels: normalizedLabels
+        labels: normalizedLabels,
       })
     } catch (error) {
       throw new Error(
-        `Failed to update PR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update PR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
 
   private async updateGitLabMergeRequest(
     number: number,
-    pr: PullRequest
+    pr: PullRequest,
   ): Promise<void> {
     try {
       const gitlab = this.client as Gitlab
@@ -319,24 +323,24 @@ export class PullRequestHelper {
         ) {
           try {
             await gitlab.MergeRequests.accept(projectId, number, {
-              shouldRemoveSourceBranch: true
+              shouldRemoveSourceBranch: true,
             })
             return
           } catch (mergeError: unknown) {
             core.warning(
-              `Failed to merge MR #${number}: ${mergeError instanceof Error ? mergeError.message : String(mergeError)}`
+              `Failed to merge MR #${number}: ${mergeError instanceof Error ? mergeError.message : String(mergeError)}`,
             )
             await gitlab.MergeRequests.edit(projectId, number, {
-              stateEvent: 'close'
+              stateEvent: 'close',
             })
           }
         } else {
           core.info(
-            `MR #${number} is already ${currentMR.state}, closing instead of merging`
+            `MR #${number} is already ${currentMR.state}, closing instead of merging`,
           )
           if (currentMR.state === 'opened') {
             await gitlab.MergeRequests.edit(projectId, number, {
-              stateEvent: 'close'
+              stateEvent: 'close',
             })
           }
         }
@@ -347,12 +351,13 @@ export class PullRequestHelper {
           title: pr.title,
           description: pr.description,
           stateEvent: pr.state === 'closed' ? 'close' : 'reopen',
-          labels: LabelHelper.formatForGitLab(normalizedLabels)
+          labels: LabelHelper.formatForGitLab(normalizedLabels),
         })
       }
     } catch (error) {
       throw new Error(
-        `Failed to update MR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to update MR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -371,11 +376,12 @@ export class PullRequestHelper {
       await octokit.rest.pulls.update({
         ...this.repo,
         pull_number: number,
-        state: 'closed'
+        state: 'closed',
       })
     } catch (error) {
       throw new Error(
-        `Failed to close PR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to close PR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
@@ -385,11 +391,12 @@ export class PullRequestHelper {
       const gitlab = this.client as Gitlab
       const projectId = await this.getProjectId!()
       await gitlab.MergeRequests.edit(projectId, number, {
-        stateEvent: 'close'
+        stateEvent: 'close',
       })
     } catch (error) {
       throw new Error(
-        `Failed to close MR: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to close MR: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       )
     }
   }
