@@ -63,7 +63,8 @@ gitlab:
 ### Understanding Configuration Semantics
 
 - **`platform.enabled`**: Platform is accessible (can read and write)
-- **`platform.sync.[entity].enabled`**: Sync this entity **FROM** this platform **TO** the other
+- **`platform.sync.[entity].enabled`**: Sync this entity **FROM** this platform
+  **TO** the other
 
 ### Direction Examples
 
@@ -372,7 +373,8 @@ Tokens are needed for platforms you're syncing **FROM**:
 | GitLab → GitHub | `GITLAB_TOKEN` + `GITHUB_TOKEN` |
 | Bidirectional   | Both tokens                     |
 
-**Note**: Both tokens are typically required because the target platform needs write access.
+**Note**: Both tokens are typically required because the target platform needs
+write access.
 
 ### Token Scopes
 

@@ -8,27 +8,31 @@
 
 # GitHub GitLab Sync Action
 
-A powerful GitHub Action that provides bi-directional synchronization between GitHub and GitLab
-repositories. Keep your projects in sync across platforms automatically.
+A powerful GitHub Action that provides bi-directional synchronization between
+GitHub and GitLab repositories. Keep your projects in sync across platforms
+automatically.
 
 ## ✨ Key Features
 
 - 🔄 **Bi-directional sync** between GitHub and GitLab
 - 🌳 **Branches, PRs/MRs, issues, releases, and tags**
 - 💬 **Enhanced comment synchronization** with proper attribution
-- 🤖 **Smart bot branch handling** - configurable cleanup of dependabot, renovate, and other bot
-  branches
+- 🤖 **Smart bot branch handling** - configurable cleanup of dependabot,
+  renovate, and other bot branches
 - ⚙️ **Highly configurable** with logical priority-based defaults
 - 🔒 **Secure** with token-based authentication
 - 🏷️ **Smart labeling** of synced content
-- 🧠 **Intelligent dependency management** - automatically enables required features
+- 🧠 **Intelligent dependency management** - automatically enables required
+  features
 - ⏱️ **Chronological sync order** - respects dependencies between operations
-- 🏗️ **Automatic repository creation** - creates missing remote repositories as private by default
+- 🏗️ **Automatic repository creation** - creates missing remote repositories as
+  private by default
 
 > [!WARNING]
 >
-> some actions applied to your repositories by this GitHub Action are DESTRUCTIVE. Please review
-> configuration options carefully before enabling, proceed at your own risk.
+> some actions applied to your repositories by this GitHub Action are
+> DESTRUCTIVE. Please review configuration options carefully before enabling,
+> proceed at your own risk.
 
 ## 🚀 Quick Start
 
@@ -75,14 +79,15 @@ jobs:
 Add these secrets to your GitHub repository:
 
 - `GITLAB_TOKEN`: GitLab personal access token with `api` scope
-- `GH_TOKEN`: GitHub personal access token with `workflow` scope (required for syncing workflow
-  files)
+- `GH_TOKEN`: GitHub personal access token with `workflow` scope (required for
+  syncing workflow files)
 
 > [!IMPORTANT]
 >
-> If your sync includes workflow files (`.github/workflows/`), you **must** use a Personal Access
-> Token with the `workflow` scope instead of the default `GITHUB_TOKEN`. The default token cannot
-> modify workflow files for security reasons.
+> If your sync includes workflow files (`.github/workflows/`), you **must** use
+> a Personal Access Token with the `workflow` scope instead of the default
+> `GITHUB_TOKEN`. The default token cannot modify workflow files for security
+> reasons.
 
 ### 3. Basic Configuration (Optional)
 
@@ -101,8 +106,8 @@ That's it! The action uses intelligent defaults:
 
 - ✅ **Enabled by default**: Branches (with history sync), Tags, Releases
 - ❌ **Disabled by default**: Pull Requests, Issues, Comments (can be noisy)
-- 🧠 **Smart dependencies**: Automatically enables required features (e.g., tags when releases are
-  enabled)
+- 🧠 **Smart dependencies**: Automatically enables required features (e.g., tags
+  when releases are enabled)
 
 🎉
 
@@ -110,35 +115,40 @@ That's it! The action uses intelligent defaults:
 
 For detailed configuration and advanced usage:
 
-- **[Configuration Guide](docs/CONFIGURATION.md)** - Complete configuration reference
+- **[Configuration Guide](docs/CONFIGURATION.md)** - Complete configuration
+  reference
 - **[Examples](docs/EXAMPLES.md)** - Real-world configuration examples
-- **[Token Setup](docs/TOKEN.md)** - Detailed token permissions and setup instructions
+- **[Token Setup](docs/TOKEN.md)** - Detailed token permissions and setup
+  instructions
 - **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
 
 ## 🤝 Need Help?
 
-- 📋 [Configuration Examples](docs/sync-config-example.yml) - Ready-to-use configuration templates
-- 🐛 [Report Issues](https://github.com/iamvikshan/gitsync/issues) - Found a bug or have a feature
-  request?
-- 💬 [Discussions](https://github.com/iamvikshan/gitsync/discussions) - Ask questions and share
-  ideas
+- 📋 [Configuration Examples](docs/sync-config-example.yml) - Ready-to-use
+  configuration templates
+- 🐛 [Report Issues](https://github.com/iamvikshan/gitsync/issues) - Found a bug
+  or have a feature request?
+- 💬 [Discussions](https://github.com/iamvikshan/gitsync/discussions) - Ask
+  questions and share ideas
 
 ## 🤝 Contributing
 
 Contributions are welcome! You MUST read the
-[`CONTRIBUTING.md`](https://github.com/iamvikshan/.github/blob/main/.github/CONTRIBUTING.md) for
-guidelines on how to contribute to this project.
+[`CONTRIBUTING.md`](https://github.com/iamvikshan/.github/blob/main/.github/CONTRIBUTING.md)
+for guidelines on how to contribute to this project.
 
 ## 📄 License
 
-MIT License - see the [LICENSE](https://github.com/iamvikshan/.github/blob/main/.github/LICENSE.md)
+MIT License - see the
+[LICENSE](https://github.com/iamvikshan/.github/blob/main/.github/LICENSE.md)
 file for details.
 
 ---
 
 <div align="center">
 
-**Built with 🖤 using [TypeScript](https://www.typescriptlang.org/) and [Bun](https://bun.sh/)**
+**Built with 🖤 using [TypeScript](https://www.typescriptlang.org/) and
+[Bun](https://bun.sh/)**
 
 _Inspired by the need for seamless cross-platform development workflows_
 

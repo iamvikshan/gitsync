@@ -33,9 +33,10 @@ Complete documentation for GitHub-GitLab sync operations.
 
 ### Configuration Files
 
-- **[sync-config-example.yml](sync-config-example.yml)** - Complete configuration template
-- **[.github/sync-config-examples/](../.github/sync-config-examples/)** - Multiple example
-  configurations
+- **[sync-config-example.yml](sync-config-example.yml)** - Complete
+  configuration template
+- **[.github/sync-config-examples/](../.github/sync-config-examples/)** -
+  Multiple example configurations
 
 ---
 
@@ -90,6 +91,8 @@ docs/
 ## Getting Help
 
 - **Issues**: Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md) first
-- **Questions**: Open a [GitHub Discussion](https://github.com/iamvikshan/gitsync/discussions)
-- **Bugs**: Report on [GitHub Issues](https://github.com/iamvikshan/gitsync/issues)
+- **Questions**: Open a
+  [GitHub Discussion](https://github.com/iamvikshan/gitsync/discussions)
+- **Bugs**: Report on
+  [GitHub Issues](https://github.com/iamvikshan/gitsync/issues)
 - **Contributing**: See [contributing.md](contributing.md)
