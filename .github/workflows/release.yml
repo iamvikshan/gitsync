@@ -22,13 +22,13 @@ jobs:
       actions: write
     steps:
       - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@v6.0.3
         with:
           fetch-depth: 0
           persist-credentials: false
 
       - name: Setup Bun (and node for some reason) and install dependencies
-        uses: iamvikshan/.github/.github/actions/setup-node-bun@main
+        uses: iamvikshan/.github/.github/actions/bun-node@main
 
       - name: Semantic Release
         env:

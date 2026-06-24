@@ -1,34 +1,34 @@
-name: "Advanced Git Sync"
-description: "Synchronize GitHub repository with GitLab including branches, PRs, and issues"
-author: "vikshan"
+name: 'GitHub - GitLab Syncey'
+description: 'Synchronize GitHub repository with GitLab including branches, PRs, and issues'
+author: 'vikshan'
 inputs:
   GITHUB_TOKEN:
-    description: "GitHub token for authentication (use GH_TOKEN secret for workflow scope)"
+    description: 'GitHub token for authentication (use GH_TOKEN secret for workflow scope)'
     required: false
     default: ${{ github.token }}
 
   GH_TOKEN:
-    description: "GitHub Personal Access Token with workflow scope (recommended)"
+    description: 'GitHub Personal Access Token with workflow scope (recommended)'
     required: false
 
   GH_PAT:
-    description: "GitHub Personal Access Token (alias for GH_TOKEN)"
+    description: 'GitHub Personal Access Token (alias for GH_TOKEN)'
     required: false
 
   GITLAB_TOKEN:
-    description: "GitLab token for authentication"
+    description: 'GitLab token for authentication'
     required: false
 
   CONFIG_PATH:
-    description: "Path to the sync configuration file"
+    description: 'Path to the sync configuration file'
     required: false
-    default: ".github/sync-config.yml"
+    default: '.github/sync-config.yml'
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Setup Bun and install dependencies
-      uses: iamvikshan/.github/.github/actions/bun-actions@main
+      uses: iamvikshan/.github/.github/actions/bun@main
       with:
         working-directory: ${{ github.action_path }}
 
@@ -41,5 +41,5 @@ runs:
       run: bun run ${{ github.action_path }}/src/index.ts
 
 branding:
-  icon: "git-branch"
-  color: "orange"
+  icon: 'git-branch'
+  color: 'orange'

@@ -9,7 +9,7 @@ on:
   release:
     types: [published]
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: '0 */12 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -25,10 +25,10 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@v6.0.3
 
       - name: Sync with GitLab
-        uses: iamvikshan/gitsync@0a4344c52b90de2a6df63bfc9b2605fe2ae68c44 # v1.1.0
+        uses: iamvikshan/gitsync@v1.1.0
         with:
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
