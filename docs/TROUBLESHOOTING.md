@@ -141,9 +141,9 @@ reasons.
 2. **Verify branch patterns:**
    ```yaml
    branches:
-     pattern: "main"      # Only main branch
-     pattern: "feature/*" # All feature branches
-     pattern: "*"         # All branches
+     pattern: 'main' # Only main branch
+     pattern: 'feature/*' # All feature branches
+     pattern: '*' # All branches
    ```
 
 ### Sync Issues
@@ -280,8 +280,8 @@ be merged.
 
    ```yaml
    branches:
-     protected: true   # Include protected branches
-     protected: false  # Exclude protected branches
+     protected: true # Include protected branches
+     protected: false # Exclude protected branches
    ```
 
 3. **Check branch permissions:**
@@ -370,8 +370,8 @@ be merged.
 2. **Verify labels configuration:**
    ```yaml
    pullRequests:
-     labels: ["synced"]  # String or array
-     labels: []          # No labels
+     labels: ['synced'] # String or array
+     labels: [] # No labels
    ```
 
 ### Timeline Issues

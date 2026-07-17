@@ -1,0 +1,31 @@
+{
+  "extends": ["github>iamvikshan/.github//renovate/typescript"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update GitHub Actions in markdown files",
+      "managerFilePatterns": ["/\\.md$/"],
+      "matchStrings": [
+        "uses:\\s*(?<depName>[\\w.-]+/[\\w.-]+)@v?(?<currentValue>[\\w.+-]+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver",
+      "extractVersionTemplate": "^v?(?<version>[\\w.+-]+)$"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "GitHub/GitBeaker core packages",
+      "groupName": "git-core",
+      "semanticCommitType": "fix",
+      "labels": ["dependencies", "npm", "core"],
+      "matchPackageNames": ["/^@actions//", "/^@gitbeaker//", "/^@octokit//"]
+    },
+    {
+      "description": "Semantic Release packages",
+      "groupName": "semantic-release",
+      "labels": ["dependencies", "npm", "release"],
+      "matchPackageNames": ["/^@semantic-release//", "/^semantic-release$/"]
+    }
+  ]
+}

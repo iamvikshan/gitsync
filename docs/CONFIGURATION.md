@@ -156,10 +156,10 @@ branches:
 **Branch Patterns:**
 
 ```yaml
-pattern: "*"           # All branches
-pattern: "main"        # Only main
-pattern: "feature/*"   # Feature branches
-pattern: "main|dev"    # Multiple branches
+pattern: '*' # All branches
+pattern: 'main' # Only main
+pattern: 'feature/*' # Feature branches
+pattern: 'main|dev' # Multiple branches
 ```
 
 **History Sync Strategies:**
@@ -324,19 +324,19 @@ Automatically handle bot-created branches:
 # Clean up orphaned bot branches (default)
 branches:
   botBranches:
-    strategy: "delete-orphaned"
-    patterns: []  # Use defaults
+    strategy: 'delete-orphaned'
+    patterns: [] # Use defaults
 
 # Sync all branches including bots
 branches:
   botBranches:
-    strategy: "sync"
+    strategy: 'sync'
 
 # Custom bot patterns
 branches:
   botBranches:
-    strategy: "delete-orphaned"
-    patterns: ["dependabot/*", "my-bot/*"]
+    strategy: 'delete-orphaned'
+    patterns: ['dependabot/*', 'my-bot/*']
 ```
 
 ### Label Management
