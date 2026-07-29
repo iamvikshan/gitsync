@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+
+# [v1.1.1](https://github.com/[secure]/gitsync/compare/v1.1.0...v1.1.1) (2026-07-29)
+
+
+
+## [1.1.1](https://github.com/[secure]/gitsync/compare/v1.1.0...v1.1.1) (2026-07-29)
+
 # [v1.1.0](https://github.com/iamvikshan/gitsync/compare/v1.0.1...v1.1.0) (2026-05-10)
 
 ## [1.1.0](https://github.com/iamvikshan/gitsync/compare/v1.0.1...v1.1.0) (2026-05-10)
