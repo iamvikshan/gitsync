@@ -33,7 +33,7 @@ reasons.
 
 3. **Update your workflow:**
    ```yaml
-   - uses: iamvikshan/gitsync@v1.1.2
+   - uses: iamvikshan/gitsync@v1.1.3
      with:
        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
        GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -575,7 +575,7 @@ curl -H "Authorization: token YOUR_GITHUB_TOKEN" \
 Include this information:
 
 ````markdown
-**Action Version:** v1.1.2
+**Action Version:** v1.1.3
 
 **Configuration:**
 
