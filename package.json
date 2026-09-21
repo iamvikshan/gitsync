@@ -64,7 +64,7 @@
     "lint-staged": "^17.5.1",
     "oxfmt": "^0.68.0",
     "oxlint": "^1.83.0",
-    "oxlint-tsgolint": "^7.0.2001",
+    "oxlint-tsgolint": "^7.0.2002",
     "semantic-release": "^25.0.9",
     "semantic-release-gitmoji": "^1.6.9",
     "typescript": "^7.0.0-dev.20260707.2"
