@@ -40,7 +40,7 @@
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@actions/github": "^9.1.1",
-    "@gitbeaker/rest": "^43.8.0",
+    "@gitbeaker/rest": "^44.1.5",
     "@octokit/rest": "^22.0.1",
     "deepmerge": "^4.3.1",
     "js-yaml": "^5.5.0",
